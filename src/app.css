@@ -1,0 +1,160 @@
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+.banjay-app {
+  overflow-x: hidden;
+}
+.banjay-app body {
+  font-family: sans-serif !important;
+  perspective: 1000px;
+  background-color: #f0f8ff;
+  padding-top: 100px;
+}
+.banjay-app h1, .banjay-app h2, .banjay-app h3, .banjay-app h4, .banjay-app h5, .banjay-app h6, .banjay-app p, .banjay-app a, .banjay-app div, .banjay-app span, .banjay-app li, .banjay-app button, .banjay-app input, .banjay-app textarea {
+  font-family: sans-serif !important;
+}
+.banjay-app .gradient-blurred-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom right, #e0f7fa, #b3e0ff, #82b1ff, #00BFFF);
+  background-image:
+    radial-gradient(at 10% 10%, rgba(255, 255, 255, 0.3) 0%, transparent 40%),
+    radial-gradient(at 90% 90%, rgba(179, 229, 255, 0.3) 0%, transparent 60%),
+    radial-gradient(at 40% 20%, rgba(200, 230, 255, 0.4) 0%, transparent 50%),
+    radial-gradient(at 70% 80%, rgba(120, 200, 255, 0.3) 0%, transparent 70%);
+  background-size: 150% 150%, 120% 120%, 180% 180%, 100% 100%;
+  background-repeat: no-repeat;
+  animation: waterMovement 120s linear infinite alternate;
+  filter: none;
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  z-index: -1;
+  transform: scale(1.03);
+}
+.banjay-app .app-content-wrapper {
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
+}
+.banjay-app .bg-light-theme {
+  background-color: rgba(240, 248, 255, 0.8);
+}
+.banjay-app .bg-white-theme {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+.banjay-app .navbar-custom {
+  background-color: rgba(255, 255, 255, 0.9); /* ← transparan */
+  border-radius: 2rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.07);
+  margin-top: 0;
+}
+.banjay-app .navbar-brand-custom {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #008ACF;
+}
+.banjay-app .navbar-nav .nav-link {
+  font-weight: 500;
+  margin-right: 1.2rem;
+  color: #00BFFF;
+  transition: color 0.3s ease-in-out;
+}
+.banjay-app .navbar-nav .nav-link:hover {
+  color: #0056b3;
+}
+.banjay-app .navbar-nav .nav-link.active {
+  color: #0056b3 !important;
+}
+.banjay-app .navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%280, 142, 207, 0.8%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.banjay-app .navbar-toggler {
+  border: none;
+}
+.banjay-app .btn-primary-theme {
+  background: linear-gradient(to right, #00BFFF, #008ACF);
+  border: none;
+  color: white;
+  padding: 0.6rem 1.5rem;
+  border-radius: 2rem;
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.banjay-app .btn-primary-theme:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.7rem 1.2rem rgba(0,0,0,.2);
+  background: linear-gradient(to right, #008ACF, #0056b3);
+}
+.banjay-app .btn-outline-theme {
+  border: 2px solid #00BFFF;
+  color: #00BFFF;
+  background-color: transparent;
+  padding: 0.6rem 1.5rem;
+  border-radius: 2rem;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.banjay-app .btn-outline-theme:hover {
+  background-color: #e0f7fa;
+  color: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 0.7rem 1.2rem rgba(0,0,0,.2);
+}
+.banjay-app .section-title-theme {
+  color: #008ACF;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+.banjay-app .text-primary-theme {
+  color: #00BFFF !important;
+}
+.banjay-app .team-member-card {
+  border: 1px solid #b3e0ff;
+}
+.banjay-app .team-member-image {
+  border: 4px solid #81c7f4 !important;
+}
+.banjay-app .footer-theme {
+  background-color: #0056b3;
+}
+.banjay-app .footer-theme a {
+  color: #add8e6;
+  transition: color 0.3s ease-in-out;
+}
+.banjay-app .footer-theme a:hover {
+  color: white;
+}
+.banjay-app .hero-section {
+  min-height: 50vh;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding-top: 120px;
+  padding-bottom: 40px;
+  box-sizing: border-box;
+}
+@keyframes waterMovement {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 100%, 100% 0%;
+  }
+  100% {
+    background-position: 100% 100%, 0% 0%, 100% 0%, 0% 100%;
+  }
+}
+.banjay-app .card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.10);
+  padding: 1.5rem;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateX(0deg) rotateY(0deg) translateZ(0);
+  transition: all 0.3s cubic-bezier(.4,1,.3,1);
+}
+.banjay-app .card:hover {
+  transform: rotateX(1deg) rotateY(1deg) translateZ(20px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.15);
+}

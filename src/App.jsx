@@ -8,7 +8,7 @@ import { motion, useInView } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './app.css';
 // Mengimpor komponen Dashboard
-import Dashboard from './Dashboard'; // Pastikan path ini benar
+import Dashboard from './dashboard'; // Pastikan path ini benar
 // Tambahkan import gambar di bagian atas file
 import mistralLogo from './assets/mistral-ai-logo.png';
 import claudeLogo from './assets/claude-ai-logo.png';

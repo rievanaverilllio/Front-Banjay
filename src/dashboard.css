@@ -171,3 +171,34 @@ canvas#saturationChart {
 canvas#rainfallChart {
   transform: translateZ(5px);
 }
+.dashboard-map-filters {
+  position: relative;
+  z-index: 1001;
+  background: transparent;
+}
+#leaflet-map {
+  position: relative;
+  z-index: 1;
+}
+.leaflet-control {
+  z-index: 1000 !important;
+}
+.leaflet-control-custom {
+  background: #f3f4f6 !important;
+  border: 1px solid #111827 !important;
+  color: #111827 !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.leaflet-control-custom span {
+  color: #111827 !important;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.leaflet-control-custom:hover {
+  background: #e5e7eb !important;
+}

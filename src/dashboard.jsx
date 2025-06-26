@@ -1,10 +1,105 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './dashboard.css';
+import 'leaflet/dist/leaflet.css';
+import BanjayMap from './BanjayMap';
+import MapFilters from './MapFilters';
+import regencies from '../public/regencies.json';
+import districts from '../public/districts.json';
 
-// If you want to use Google Fonts, import in index.html or via CSS
-// import 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap';
+const provinceOptions = [
+  { value: 'Jawa Barat', label: 'Jawa Barat', cities: [
+    { value: 'Bandung', label: 'Bandung', latlng: [-6.9147, 107.6098], districts: [
+      { name: 'Cicendo', latlng: [-6.9005, 107.5895] },
+      { name: 'Andir', latlng: [-6.9142, 107.5731] },
+      { name: 'Coblong', latlng: [-6.8838, 107.6131] }
+    ]}
+  ]},
+  { value: 'Jawa Tengah', label: 'Jawa Tengah', cities: [
+    { value: 'Semarang', label: 'Semarang', latlng: [-6.9667, 110.4167], districts: [
+      { name: 'Candisari', latlng: [-7.0015, 110.4302] },
+      { name: 'Tembalang', latlng: [-7.0546, 110.4547] },
+      { name: 'Banyumanik', latlng: [-7.0567, 110.4302] }
+    ]}
+  ]},
+  { value: 'Jawa Timur', label: 'Jawa Timur', cities: [
+    { value: 'Surabaya', label: 'Surabaya', latlng: [-7.2504, 112.7688], districts: [
+      { name: 'Wonokromo', latlng: [-7.2956, 112.7342] },
+      { name: 'Tegalsari', latlng: [-7.2677, 112.7361] },
+      { name: 'Rungkut', latlng: [-7.3219, 112.7714] }
+    ]}
+  ]}
+];
 
 const Dashboard = () => {
+  const mapRef = useRef(null);
+  const [provinsi, setProvinsi] = useState('');
+  const [kota, setKota] = useState('');
+  const [kecamatan, setKecamatan] = useState('');
+  const [markerLatLng, setMarkerLatLng] = useState(null);
+  const [markerZoom, setMarkerZoom] = useState(5.2);
+  const [chatInput, setChatInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [chatResponse, setChatResponse] = useState('');
+
+  // Dapatkan opsi kota & kecamatan sesuai provinsi/kota
+  const selectedProvince = provinceOptions.find(p => p.value === provinsi);
+  const cityOptions = selectedProvince ? selectedProvince.cities : [];
+  const selectedCity = cityOptions.find(c => c.value === kota);
+  const districtOptions = selectedCity ? selectedCity.districts : [];
+
+  // Dapatkan koordinat marker & zoom
+  if (selectedProvince && !kota && !kecamatan) {
+    setMarkerLatLng(selectedProvince.cities[0]?.latlng); // Titik kota pertama di provinsi
+    setMarkerZoom(7);
+  }
+  if (selectedCity && !kecamatan) {
+    setMarkerLatLng(selectedCity.latlng);
+    setMarkerZoom(11);
+  }
+  if (selectedCity && kecamatan) {
+    const selectedDistrict = selectedCity.districts.find(d => d.name === kecamatan);
+    setMarkerLatLng(selectedDistrict ? selectedDistrict.latlng : selectedCity.latlng);
+    setMarkerZoom(13);
+  }
+
+  const handleChatSubmit = async () => {
+    setIsLoading(true);
+
+    // Ambil nama kota dan kecamatan dari JSON
+    let cityLabel = kota;
+    const regencyObj = regencies.find(r => r.id === kota);
+    if (regencyObj) cityLabel = regencyObj.name;
+
+    let districtLabel = kecamatan;
+    const districtObj = districts.find(d => d.id === kecamatan);
+    if (districtObj) districtLabel = districtObj.name;
+
+    // Ambil koordinat marker
+    const lat = markerLatLng ? markerLatLng[0] : '';
+    const lon = markerLatLng ? markerLatLng[1] : '';
+
+    // Format kalimat: kirim nama dan kode kota, serta nama dan kode kecamatan
+    const payload = `kota: ${cityLabel} (${kota}), kecamatan: ${districtLabel} (${kecamatan}), lat: ${lat}, lon: ${lon}, pesan: ${chatInput}`;
+
+    try {
+      const res = await fetch('http://localhost:5000/api/analisis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: payload })
+      });
+
+      const data = await res.json();
+      setChatResponse(
+        JSON.stringify(data.hasil, null, 2) || 'Berhasil dikirim.'
+      );
+    } catch (err) {
+      setChatResponse('Gagal mengirim ke server.');
+    }
+
+    setIsLoading(false);
+  };
+
+
   useEffect(() => {
     // Chart.js Rainfall Chart
     if (window.Chart && document.getElementById('rainfallChart')) {
@@ -57,13 +152,8 @@ const Dashboard = () => {
         },
         options: {
           plugins: {
-            legend: {
-              position: 'top'
-            },
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-            }
+            legend: { position: 'top' },
+            tooltip: { mode: 'index', intersect: false }
           },
           responsive: true,
           maintainAspectRatio: false,
@@ -78,114 +168,47 @@ const Dashboard = () => {
                 }
               }
             },
-            x: {
-              grid: {
-                display: false
-              }
-            }
+            x: { grid: { display: false } }
           }
         }
       });
     }
-    // Google Charts loader
-    const script = document.createElement('script');
-    script.src = 'https://www.gstatic.com/charts/loader.js';
-    script.async = true;
-    script.onload = () => {
-      if (window.google) {
-        window.google.charts.load('current', {
-          packages: ['geochart'],
-          mapsApiKey: ''
-        });
-        window.google.charts.setOnLoadCallback(drawRegionsMap);
-      }
-    };
-    document.body.appendChild(script);
-    // Chart.js loader
-    const chartScript = document.createElement('script');
-    chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-    chartScript.async = true;
-    chartScript.onload = () => {};
-    document.body.appendChild(chartScript);
-    // Redraw on resize
-    window.addEventListener('resize', drawRegionsMap);
-    function drawRegionsMap() {
-      if (!window.google || !window.google.visualization) return;
-      var data = window.google.visualization.arrayToDataTable([
-        ['Province Code', 'Province Name', 'Jumlah'],
-        ['ID-AC', 'Aceh', 120],
-        ['ID-BA', 'Bali', 85],
-        ['ID-BB', 'Bangka Belitung', 65],
-        ['ID-BT', 'Banten', 45],
-        ['ID-BE', 'Bengkulu', 95],
-        ['ID-YO', 'DI Yogyakarta', 210],
-        ['ID-JK', 'DKI Jakarta', 700],
-        ['ID-GO', 'Gorontalo', 75],
-        ['ID-JA', 'Jambi', 110],
-        ['ID-JB', 'Jawa Barat', 320],
-        ['ID-JT', 'Jawa Tengah', 280],
-        ['ID-JI', 'Jawa Timur', 380],
-        ['ID-KB', 'Kalimantan Barat', 70],
-        ['ID-KS', 'Kalimantan Selatan', 60],
-        ['ID-KT', 'Kalimantan Tengah', 55],
-        ['ID-KI', 'Kalimantan Timur', 50],
-        ['ID-KU', 'Kalimantan Utara', 40],
-        ['ID-KR', 'Kepulauan Riau', 35],
-        ['ID-LA', 'Lampung', 30],
-        ['ID-MA', 'Maluku', 25],
-        ['ID-MU', 'Maluku Utara', 20],
-        ['ID-NB', 'Nusa Tenggara Barat', 90],
-        ['ID-NT', 'Nusa Tenggara Timur', 80],
-        ['ID-PA', 'Papua', 15],
-        ['ID-PB', 'Papua Barat', 12],
-        ['ID-RI', 'Riau', 130],
-        ['ID-SR', 'Sulawesi Barat', 40],
-        ['ID-SN', 'Sulawesi Selatan', 95],
-        ['ID-ST', 'Sulawesi Tengah', 65],
-        ['ID-SG', 'Sulawesi Tenggara', 55],
-        ['ID-SA', 'Sulawesi Utara', 45],
-        ['ID-SB', 'Sumatera Barat', 180],
-        ['ID-SS', 'Sumatera Selatan', 150],
-        ['ID-SU', 'Sumatera Utara', 200],
-      ]);
 
-      var options = {
-        region: 'ID',
-        displayMode: 'regions',
-        resolution: 'provinces',
-        colorAxis: { colors: ['#e0ffd9', '#008000'] },
-        backgroundColor: '#81d4fa',
-        datalessRegionColor: 'white',
-        defaultColor: '#bad5b5',
-        tooltip: {
-          trigger: 'focus',
-          showTitle: true,
-          textStyle: { fontSize: 14 }
-        },
-        width: '100%',
-        height: 400,
-        keepAspectRatio: true
-      };
+    // LEAFLET MAP
+    if (mapRef.current && !mapRef.current._leaflet_id) {
+      const initialView = { center: [-2.5, 118], zoom: 5.2 };
+      const map = L.map(mapRef.current).setView(initialView.center, initialView.zoom);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
 
-      // Format kolom tooltip seperti di HTML
-      var formatter = new window.google.visualization.PatternFormat('{1}: {2}');
-      formatter.format(data, [0, 1, 2], 0);
-
-      var view = new window.google.visualization.DataView(data);
-      view.setColumns([0, 2, {
-        type: 'string',
-        role: 'tooltip',
-        calc: function (dt, row) {
-          return dt.getValue(row, 1) + ': ' + dt.getValue(row, 2);
+      // Custom Reset Button
+      const resetControl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function () {
+          const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
+          btn.innerHTML = '⟳';
+          btn.title = 'Reset Map';
+          btn.style.width = '34px';
+          btn.style.height = '34px';
+          btn.style.fontSize = '1.2rem';
+          btn.style.cursor = 'pointer';
+          btn.style.background = '#fff';
+          btn.style.border = 'none';
+          btn.style.outline = 'none';
+          btn.onmousedown = btn.ondblclick = L.DomEvent.stopPropagation;
+          btn.onclick = function () {
+            map.setView(initialView.center, initialView.zoom);
+          };
+          return btn;
         }
-      }]);
-
-      var chart = new window.google.visualization.GeoChart(document.getElementById('regions_div'));
-      chart.draw(view, options);
+      });
+      map.addControl(new resetControl());
     }
+
     // Cleanup
     return () => {
-      window.removeEventListener('resize', drawRegionsMap);
+      // Optional: destroy map if needed
     };
   }, []);
 
@@ -193,10 +216,7 @@ const Dashboard = () => {
     <>
       <div className="dashboard-root">
         <header className="dashboard-header">
-          <h1
-            className="dashboard-title"
-          >
-          </h1>
+          <h1 className="dashboard-title"></h1>
         </header>
         <main className="dashboard-main">
           <div className="dashboard-card dashboard-full-width d-flex align-items-center">
@@ -221,19 +241,49 @@ const Dashboard = () => {
 
           <div className="dashboard-card dashboard-full-width">
             <h3>Interactive Banjay Map</h3>
-            <div id="regions_div" style={{ width: '100%', height: 400, borderRadius: '0.75rem', overflow: 'hidden', background: '#e0f7fa' }}></div>
-            <div id="province-info" className="dashboard-province-info"></div>
+            <MapFilters
+              provinsi={provinsi}
+              setProvinsi={setProvinsi}
+              kota={kota}
+              setKota={setKota}
+              kecamatan={kecamatan}
+              setKecamatan={setKecamatan}
+              setMarkerLatLng={setMarkerLatLng}
+              setMarkerZoom={setMarkerZoom}
+            />
+            <BanjayMap
+              markerLatLng={markerLatLng}
+              zoom={markerZoom}
+              provinsi={provinsi}
+              kota={kota}
+              onPickCoordinate={setMarkerLatLng}
+            />
+            {/* Tampilkan lat/lon di bawah peta */}
+            <div style={{ marginTop: '0.5rem', fontSize: '1rem', textAlign: 'center', color: '#008ACF' }}>
+              {markerLatLng
+                ? `Latitude: ${markerLatLng[0]}, Longitude: ${markerLatLng[1]}`
+                : 'Pilih lokasi untuk melihat koordinat'}
+            </div>
           </div>
           <div className="dashboard-card">
             <h3>Chatbot untuk Menganalisis</h3>
             <label htmlFor="chatbot-input">Ketik pertanyaan atau data yang ingin dianalisis:</label>
-            <textarea id="chatbot-input" rows={5} placeholder="Tulis pertanyaan atau data di sini..."></textarea>
+            <textarea
+              id="chatbot-input"
+              rows={5}
+              placeholder="Tulis pertanyaan atau data di sini..."
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
+            />
             <h3>Upload Gambar Satelit BMKG</h3>
             <div style={{ margin: '0.5rem 0', fontSize: '0.98rem' }}>
               Silakan kunjungi <a href="https://www.bmkg.go.id/cuaca/satelit/himawari-cloud-type" target="_blank" rel="noopener noreferrer">https://www.bmkg.go.id/cuaca/satelit/himawari-cloud-type</a> lalu upload gambarnya.
             </div>
             <input id="chatbot-image" type="file" accept="image/*" />
-            <button>Kirim</button>
+            <button onClick={handleChatSubmit} disabled={isLoading}>
+              {isLoading ? 'Mengirim...' : 'Kirim'}
+            </button>
+            <div style={{ marginTop: 8, color: '#008ACF' }}>{chatResponse}</div>
           </div>
           <div className="dashboard-card">
             <h2 className="dashboard-risk-title">Banjay Risk Assessment</h2>
@@ -255,7 +305,7 @@ const Dashboard = () => {
           <div className="dashboard-card">
             <h3>Respons Lengkap Chatbot</h3>
             <div className="dashboard-chatbot-response">
-              Respons lengkap dari chatbot akan muncul di sini.
+              {chatResponse || 'Respons lengkap dari chatbot akan muncul di sini.'}
             </div>
             <textarea id="chatbot-followup" rows={10} placeholder="Respone Analisis lengkap..."></textarea>
           </div>

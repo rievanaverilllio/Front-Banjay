@@ -99,6 +99,10 @@
   border: 1px solid #bbf7d0;
   transform: translateZ(10px);
 }
+.dashboard-badge-sedang {
+  background: #ffe082;
+  color: #b26a00;
+}
 .dashboard-badge-icon {
   font-size: 1.5rem;
   margin-right: 0.5rem;

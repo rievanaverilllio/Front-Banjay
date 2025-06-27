@@ -3,35 +3,10 @@ import './dashboard.css';
 import 'leaflet/dist/leaflet.css';
 import BanjayMap from './BanjayMap';
 import MapFilters from './MapFilters';
-import regencies from '../public/regencies.json';
-import districts from '../public/districts.json';
+import ReactModal from 'react-modal'; // pastikan sudah install react-modal
 
-const provinceOptions = [
-  { value: 'Jawa Barat', label: 'Jawa Barat', cities: [
-    { value: 'Bandung', label: 'Bandung', latlng: [-6.9147, 107.6098], districts: [
-      { name: 'Cicendo', latlng: [-6.9005, 107.5895] },
-      { name: 'Andir', latlng: [-6.9142, 107.5731] },
-      { name: 'Coblong', latlng: [-6.8838, 107.6131] }
-    ]}
-  ]},
-  { value: 'Jawa Tengah', label: 'Jawa Tengah', cities: [
-    { value: 'Semarang', label: 'Semarang', latlng: [-6.9667, 110.4167], districts: [
-      { name: 'Candisari', latlng: [-7.0015, 110.4302] },
-      { name: 'Tembalang', latlng: [-7.0546, 110.4547] },
-      { name: 'Banyumanik', latlng: [-7.0567, 110.4302] }
-    ]}
-  ]},
-  { value: 'Jawa Timur', label: 'Jawa Timur', cities: [
-    { value: 'Surabaya', label: 'Surabaya', latlng: [-7.2504, 112.7688], districts: [
-      { name: 'Wonokromo', latlng: [-7.2956, 112.7342] },
-      { name: 'Tegalsari', latlng: [-7.2677, 112.7361] },
-      { name: 'Rungkut', latlng: [-7.3219, 112.7714] }
-    ]}
-  ]}
-];
 
 const Dashboard = () => {
-  const mapRef = useRef(null);
   const [provinsi, setProvinsi] = useState('');
   const [kota, setKota] = useState('');
   const [kecamatan, setKecamatan] = useState('');
@@ -40,46 +15,37 @@ const Dashboard = () => {
   const [chatInput, setChatInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [chatResponse, setChatResponse] = useState('');
-
-  // Dapatkan opsi kota & kecamatan sesuai provinsi/kota
-  const selectedProvince = provinceOptions.find(p => p.value === provinsi);
-  const cityOptions = selectedProvince ? selectedProvince.cities : [];
-  const selectedCity = cityOptions.find(c => c.value === kota);
-  const districtOptions = selectedCity ? selectedCity.districts : [];
-
-  // Dapatkan koordinat marker & zoom
-  if (selectedProvince && !kota && !kecamatan) {
-    setMarkerLatLng(selectedProvince.cities[0]?.latlng); // Titik kota pertama di provinsi
-    setMarkerZoom(7);
-  }
-  if (selectedCity && !kecamatan) {
-    setMarkerLatLng(selectedCity.latlng);
-    setMarkerZoom(11);
-  }
-  if (selectedCity && kecamatan) {
-    const selectedDistrict = selectedCity.districts.find(d => d.name === kecamatan);
-    setMarkerLatLng(selectedDistrict ? selectedDistrict.latlng : selectedCity.latlng);
-    setMarkerZoom(13);
-  }
+  const [wilayah, setWilayah] = useState({
+    provinsi: null,
+    kota: null,
+    kecamatan: null,
+  });
+  const [riskSummary, setRiskSummary] = useState({
+    label: 'Low',
+    score: '',
+    recommendation: '',
+  });
+  const [showModal, setShowModal] = useState(false);
+  const [parsedReport, setParsedReport] = useState(null);
+  const [finalReport, setFinalReport] = useState(''); // untuk modal
+  const [chatbotFollowup, setChatbotFollowup] = useState(''); // Tambahkan state untuk respons analisis lengkap
 
   const handleChatSubmit = async () => {
     setIsLoading(true);
 
-    // Ambil nama kota dan kecamatan dari JSON
-    let cityLabel = kota;
-    const regencyObj = regencies.find(r => r.id === kota);
-    if (regencyObj) cityLabel = regencyObj.name;
+    // Ambil nama & kode dari state wilayah
+    const provinceLabel = wilayah.provinsi?.name || '';
+    const provinceCode = wilayah.provinsi?.id || '';
+    const cityLabel = wilayah.kota?.name || '';
+    const cityCode = wilayah.kota?.id || '';
+    const districtLabel = wilayah.kecamatan?.name || '';
+    const districtCode = wilayah.kecamatan?.id || '';
 
-    let districtLabel = kecamatan;
-    const districtObj = districts.find(d => d.id === kecamatan);
-    if (districtObj) districtLabel = districtObj.name;
-
-    // Ambil koordinat marker
     const lat = markerLatLng ? markerLatLng[0] : '';
     const lon = markerLatLng ? markerLatLng[1] : '';
 
     // Format kalimat: kirim nama dan kode kota, serta nama dan kode kecamatan
-    const payload = `kota: ${cityLabel} (${kota}), kecamatan: ${districtLabel} (${kecamatan}), lat: ${lat}, lon: ${lon}, pesan: ${chatInput}`;
+    const payload = `provinsi: ${provinceLabel}, (${provinceCode}), kota: ${cityLabel} (${cityCode}), kecamatan: ${districtLabel} (${districtCode}), dengan koordinat ${lat} LS, dan ${lon} BT, pesan: ${chatInput}`;
 
     try {
       const res = await fetch('http://localhost:5000/api/analisis', {
@@ -92,6 +58,45 @@ const Dashboard = () => {
       setChatResponse(
         JSON.stringify(data.hasil, null, 2) || 'Berhasil dikirim.'
       );
+
+      // Tampilkan cloud_coverage_summary & satellite_analysis di chatbot-followup
+      let followup = '';
+      if (data.hasil) {
+        if (data.hasil.cloud_coverage_summary) {
+          followup += `<div style="font-weight:bold;color:#008ACF;margin-bottom:6px;">Ringkasan Tutupan Awan:</div>
+            <img src="https://inderaja.bmkg.go.id/IMAGE/HCAI/CLC/HCAI_CLC_Indonesia.png" alt="Citra Satelit BMKG" style="width:100%;max-width:500px;display:block;margin:10px 0 16px 0;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.07);" />
+            <div>${data.hasil.cloud_coverage_summary}</div>`;
+        }
+        if (data.hasil.satellite_analysis) {
+          // Format markdown sederhana ke HTML
+          let analysis = data.hasil.satellite_analysis
+            .replace(/^### (.+)$/m, '<div style="font-weight:bold;font-size:1.1em;margin-bottom:8px;">$1</div>')
+            .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+            .replace(/\n\s*-\s/g, '<li>')
+            .replace(/\n\d+\.\s/g, '<br><b>')
+            .replace(/\n/g, '<br/>');
+          // List bullet
+          analysis = analysis.replace(/<li>(.+?)(?=<li>|<br>|$)/g, '<ul><li>$1</li></ul>');
+          followup += `<div>${analysis}</div>`;
+        }
+      }
+      setChatbotFollowup(followup);
+
+      // --- PARSING FINAL REPORT ---
+      if (data.hasil && data.hasil.final_report) {
+        const report = data.hasil.final_report;
+        setFinalReport(report); // simpan untuk modal
+        // Ambil Kesimpulan Risiko
+        const riskMatch = report.match(/\*\*1\. Kesimpulan Risiko:\*\* ([^\n]+)/);
+        const scoreMatch = report.match(/\*\*2\. Skor Risiko:\*\* ([^\n]+)/);
+        const rekomMatch = report.match(/\*\*6\. Rekomendasi Akhir:\*\*([\s\S]*)/);
+
+        setRiskSummary({
+          label: riskMatch ? riskMatch[1].trim() : 'Low',
+          score: scoreMatch ? scoreMatch[1].trim() : '',
+          recommendation: rekomMatch ? rekomMatch[1].trim() : '',
+        });
+      }
     } catch (err) {
       setChatResponse('Gagal mengirim ke server.');
     }
@@ -99,118 +104,35 @@ const Dashboard = () => {
     setIsLoading(false);
   };
 
+  function parseFinalReport(report) {
+    if (!report) return null;
+    // Parsing dengan regex
+    const riskMatch = report.match(/\*\*1\. Kesimpulan Risiko:\*\* ([^\n]+)\n\n\*\*2\. Skor Risiko:\*\* ([^\n]+)/);
+    const faktorPeningkat = report.match(/\*\*3\. Faktor Peningkat Risiko:\*\*([\s\S]*?)\n\n\*\*4\./);
+    const faktorPereda = report.match(/\*\*4\. Faktor Pereda Risiko:\*\*([\s\S]*?)\n\n\*\*5\./);
+    const analisisSintesis = report.match(/\*\*5\. Analisis Sintesis \(Interaksi Cuaca dan Lahan\):\*\*([\s\S]*?)\n\n\*\*6\./);
+    const rekomAkhir = report.match(/\*\*6\. Rekomendasi Akhir:\*\*([\s\S]*)/);
 
-  useEffect(() => {
-    // Chart.js Rainfall Chart
-    if (window.Chart && document.getElementById('rainfallChart')) {
-      const rainfallCtx = document.getElementById('rainfallChart').getContext('2d');
-      new window.Chart(rainfallCtx, {
-        type: 'bar',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          datasets: [
-            {
-              label: 'Rainfall (mm)',
-              data: [186, 305, 237, 150, 200, 214],
-              backgroundColor: '#3b82f6'
-            },
-            {
-              label: 'Target (mm)',
-              data: [160, 180, 190, 170, 190, 195],
-              backgroundColor: '#10b981'
-            }
-          ]
-        },
-        options: {
-          plugins: { legend: { position: 'top' } },
-          responsive: true
-        }
-      });
-    }
-    // Chart.js Saturation Chart
-    if (window.Chart && document.getElementById('saturationChart')) {
-      const saturationCtx = document.getElementById('saturationChart').getContext('2d');
-      new window.Chart(saturationCtx, {
-        type: 'line',
-        data: {
-          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          datasets: [
-            {
-              label: 'Saturation Level',
-              data: [30, 45, 55, 65, 70, 60, 50],
-              borderColor: '#3b82f6',
-              fill: false
-            },
-            {
-              label: 'Critical Level',
-              data: [60, 60, 60, 60, 60, 60, 60],
-              borderColor: '#ef4444',
-              borderDash: [4, 4],
-              fill: false
-            }
-          ]
-        },
-        options: {
-          plugins: {
-            legend: { position: 'top' },
-            tooltip: { mode: 'index', intersect: false }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              min: 20,
-              max: 80,
-              ticks: {
-                stepSize: 10,
-                callback: function(value) {
-                  return value + '%';
-                }
-              }
-            },
-            x: { grid: { display: false } }
-          }
-        }
-      });
-    }
+    // Helper untuk list
+    const toList = (txt) =>
+      txt
+        ? txt
+            .split('\n')
+            .map((s) => s.replace(/^\s*-\s*/, '').trim())
+            .filter(Boolean)
+        : [];
 
-    // LEAFLET MAP
-    if (mapRef.current && !mapRef.current._leaflet_id) {
-      const initialView = { center: [-2.5, 118], zoom: 5.2 };
-      const map = L.map(mapRef.current).setView(initialView.center, initialView.zoom);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
-
-      // Custom Reset Button
-      const resetControl = L.Control.extend({
-        options: { position: 'topleft' },
-        onAdd: function () {
-          const btn = L.DomUtil.create('button', 'leaflet-bar leaflet-control leaflet-control-custom');
-          btn.innerHTML = '⟳';
-          btn.title = 'Reset Map';
-          btn.style.width = '34px';
-          btn.style.height = '34px';
-          btn.style.fontSize = '1.2rem';
-          btn.style.cursor = 'pointer';
-          btn.style.background = '#fff';
-          btn.style.border = 'none';
-          btn.style.outline = 'none';
-          btn.onmousedown = btn.ondblclick = L.DomEvent.stopPropagation;
-          btn.onclick = function () {
-            map.setView(initialView.center, initialView.zoom);
-          };
-          return btn;
-        }
-      });
-      map.addControl(new resetControl());
-    }
-
-    // Cleanup
-    return () => {
-      // Optional: destroy map if needed
+    return {
+      "1. Kesimpulan Risiko": {
+        "Tingkat Risiko": riskMatch ? riskMatch[1].trim() : '',
+        "Skor Risiko": riskMatch ? riskMatch[2].trim() : '',
+      },
+      "2. Faktor Peningkat Risiko": faktorPeningkat ? toList(faktorPeningkat[1]) : [],
+      "3. Faktor Pereda Risiko": faktorPereda ? toList(faktorPereda[1]) : [],
+      "4. Analisis Sintesis (Interaksi Cuaca dan Lahan)": analisisSintesis ? analisisSintesis[1].trim() : '',
+      "5. Rekomendasi Akhir": rekomAkhir ? rekomAkhir[1].trim() : '',
     };
-  }, []);
+  }
 
   return (
     <>
@@ -250,6 +172,7 @@ const Dashboard = () => {
               setKecamatan={setKecamatan}
               setMarkerLatLng={setMarkerLatLng}
               setMarkerZoom={setMarkerZoom}
+              onWilayahChange={setWilayah} // Tambahkan ini
             />
             <BanjayMap
               markerLatLng={markerLatLng}
@@ -275,39 +198,159 @@ const Dashboard = () => {
               value={chatInput}
               onChange={e => setChatInput(e.target.value)}
             />
-            <h3>Upload Gambar Satelit BMKG</h3>
-            <div style={{ margin: '0.5rem 0', fontSize: '0.98rem' }}>
-              Silakan kunjungi <a href="https://www.bmkg.go.id/cuaca/satelit/himawari-cloud-type" target="_blank" rel="noopener noreferrer">https://www.bmkg.go.id/cuaca/satelit/himawari-cloud-type</a> lalu upload gambarnya.
-            </div>
-            <input id="chatbot-image" type="file" accept="image/*" />
             <button onClick={handleChatSubmit} disabled={isLoading}>
               {isLoading ? 'Mengirim...' : 'Kirim'}
             </button>
-            <div style={{ marginTop: 8, color: '#008ACF' }}>{chatResponse}</div>
+            <div style={{ marginTop: 8, color: '#008ACF' }}></div>
           </div>
           <div className="dashboard-card">
             <h2 className="dashboard-risk-title">Banjay Risk Assessment</h2>
-            <div className="dashboard-badge dashboard-badge-low">
+            <div className={`dashboard-badge dashboard-badge-${riskSummary.label.toLowerCase()}`}>
               <span className="dashboard-badge-icon">&#128712;</span>
-              <span className="dashboard-badge-label">Low</span>
+              <span className="dashboard-badge-label">{riskSummary.label}</span>
             </div>
-            <p className="dashboard-note">Showing sample data. Submit your data for actual analysis.</p>
+            {riskSummary.score && (
+              <div style={{ fontWeight: 600, margin: '8px 0', color: '#008ACF' }}>
+                Skor Risiko: {riskSummary.score}
+              </div>
+            )}
             <div className="dashboard-section">
               <div className="dashboard-section-title dashboard-section-info">
                 <span className="dashboard-section-icon">&#8505;</span>
                 Analysis Summary
               </div>
               <div className="dashboard-section-content">
-                This is a placeholder summary. Based on the dummy data, the current Banjay risk is considered low. Rainfall has been minimal and soil saturation is well within safe limits. No immediate threats are detected for the selected location.
+                {riskSummary.recommendation
+                  ? riskSummary.recommendation
+                  : 'Belum ada rekomendasi. Submit data untuk analisis.'}
               </div>
+              {/* Button Selengkapnya */}
+              {finalReport && (
+                <button
+                  style={{
+                    marginTop: 12,
+                    background: '#008ACF',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: 6,
+                    padding: '6px 18px',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => setShowModal(true)}
+                >
+                  Selengkapnya
+                </button>
+              )}
             </div>
           </div>
+
+          {/* Modal untuk Final Report */}
+          <ReactModal
+            isOpen={showModal}
+            onRequestClose={() => setShowModal(false)}
+            contentLabel="Final Report"
+            style={{
+              overlay: { background: 'rgba(0,0,0,0.35)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' },
+              content: {
+                position: 'static',
+                maxWidth: 650,
+                minWidth: 320,
+                margin: 'auto',
+                borderRadius: 16,
+                padding: '32px 28px 24px 28px',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+                border: 'none',
+                background: '#f8fafc',
+                fontFamily: 'inherit',
+                inset: 'unset',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h2 style={{ margin: 0, fontWeight: 700, color: '#008ACF', fontSize: 22 }}>Final Report Analisis</h2>
+              <button
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: 24,
+                  color: '#008ACF',
+                  cursor: 'pointer',
+                  marginLeft: 12,
+                  lineHeight: 1
+                }}
+                onClick={() => setShowModal(false)}
+                aria-label="Tutup"
+                title="Tutup"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              style={{
+                whiteSpace: 'pre-wrap',
+                fontFamily: 'inherit',
+                margin: '18px 0',
+                fontSize: 16,
+                color: '#222',
+                lineHeight: 1.6,
+                maxHeight: 400,
+                overflowY: 'auto',
+                background: '#fff',
+                borderRadius: 8,
+                padding: '18px 16px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}
+              dangerouslySetInnerHTML={{
+                __html: finalReport
+                  .replace(/###\s*Executive Summary/g, '<b style="font-size:18px;">Executive Summary</b>')
+                  .replace(/\*\*(\d+\..+?)\*\*/g, '<b>$1</b>')
+                  .replace(/\n/g, '<br/>')
+              }}
+            />
+            <button
+              style={{
+                background: '#008ACF',
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '8px 28px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: 16,
+                margin: '0 auto',
+                display: 'block',
+                marginTop: 18
+              }}
+              onClick={() => setShowModal(false)}
+            >
+              Tutup
+            </button>
+          </ReactModal>
           <div className="dashboard-card">
             <h3>Respons Lengkap Chatbot</h3>
             <div className="dashboard-chatbot-response">
-              {chatResponse || 'Respons lengkap dari chatbot akan muncul di sini.'}
             </div>
-            <textarea id="chatbot-followup" rows={10} placeholder="Respone Analisis lengkap..."></textarea>
+            <div
+              id="chatbot-followup"
+              style={{
+                whiteSpace: 'pre-wrap',
+                fontFamily: 'inherit',
+                background: '#f8fafc',
+                borderRadius: 8,
+                padding: '14px 12px',
+                minHeight: 180,
+                maxHeight: 320, // tambahkan batas tinggi
+                fontSize: 15,
+                color: '#222',
+                marginBottom: 12,
+                border: '1px solid #e0e7ef',
+                overflowY: 'auto' // aktifkan scroll jika konten melebihi maxHeight
+              }}
+              dangerouslySetInnerHTML={{ __html: chatbotFollowup }}
+            />
           </div>
           <div className="dashboard-card">
             <h3>Histori Jumlah Banjir</h3>

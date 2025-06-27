@@ -8,7 +8,8 @@ const MapFilters = ({
   kecamatan,
   setKecamatan,
   setMarkerLatLng,
-  setMarkerZoom
+  setMarkerZoom,
+  onWilayahChange // Tambahkan prop ini
 }) => {
   const [provinces, setProvinces] = useState([]);
   const [regencies, setRegencies] = useState([]);
@@ -33,6 +34,24 @@ const MapFilters = ({
   const cityOptions = regencies.filter(r => r.province_id === provinsi);
   const selectedCity = regencies.find(c => c.id === kota);
   const districtOptions = districts.filter(d => d.regency_id === kota);
+  const selectedDistrict = districts.find(d => d.id === kecamatan);
+
+  // Kirim data wilayah ke parent setiap kali berubah
+  useEffect(() => {
+    if (onWilayahChange) {
+      onWilayahChange({
+        provinsi: selectedProvince
+          ? { id: selectedProvince.id, name: selectedProvince.name }
+          : null,
+        kota: selectedCity
+          ? { id: selectedCity.id, name: selectedCity.name }
+          : null,
+        kecamatan: selectedDistrict
+          ? { id: selectedDistrict.id, name: selectedDistrict.name }
+          : null,
+      });
+    }
+  }, [selectedProvince, selectedCity, selectedDistrict, onWilayahChange]);
 
   // Handle marker update
   useEffect(() => {

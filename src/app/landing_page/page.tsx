@@ -8,9 +8,11 @@ import { useLenisSmoothScroll } from '@/lib/useLenisSmoothScroll';
 import { useInView } from 'react-intersection-observer';
 import { ArrowRight, ArrowUpRight, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LandingPage() {
   useLenisSmoothScroll();
+  const router = useRouter();
   const arrowCount = 5;
 
   // Data for team members (kept generic, focusing on team expertise)
@@ -273,7 +275,7 @@ export default function LandingPage() {
                 This project aims to develop AI with LLM for early flood monitoring based on Himawari BMKG satellite imagery, various verified journals, historical flood data, and surrounding environmental data collected during sampling.
               </motion.p>
               <motion.div variants={fadeInFromBottom} className="flex flex-col sm:flex-row lg:justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                <button className="px-6 py-3 bg-black border border-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors">
+                <button onClick={() => router.push('/login')} className="px-6 py-3 bg-black border border-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors">
                   TRY OUR DEMO
                 </button>
               </motion.div>

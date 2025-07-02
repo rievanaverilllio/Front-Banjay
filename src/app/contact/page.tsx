@@ -3,11 +3,33 @@
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 import { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { useLenisSmoothScroll } from '@/lib/useLenisSmoothScroll';
+import { useInView } from 'react-intersection-observer';
 
 export default function ContactPage() {
   // Dummy refs for Navbar (not used for scrolling on this page)
   const dummyRef = useRef<HTMLElement | null>(null);
   const dummyDivRef = useRef<HTMLDivElement>(null!); // For footerRef, non-null assertion
+
+  useLenisSmoothScroll();
+
+  const [mainContentRef, mainContentInView] = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  const fadeInFromBottom = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' as const } },
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1, // Delay between children animations
+      },
+    },
+  };
 
   return (
     <div className="bg-[#FAFAF5] min-h-screen flex flex-col text-black">
@@ -21,14 +43,20 @@ export default function ContactPage() {
         pricingRef={dummyRef}
         contactRef={dummyRef}
       />
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 pt-32 pb-16">
-        <h1 className="text-5xl font-bold mb-2">Contact</h1>
-        <hr className="border-gray-300 mb-8" />
-        <div className="flex flex-col lg:flex-row gap-12">
+      <motion.main
+        ref={mainContentRef}
+        initial="hidden"
+        animate={mainContentInView ? "visible" : "hidden"}
+        variants={staggerContainer}
+        className="flex-1 max-w-7xl mx-auto w-full px-4 pt-32 pb-16"
+      >
+        <motion.h1 variants={fadeInFromBottom} className="text-5xl font-bold mb-2">Contact</motion.h1>
+        <motion.hr variants={fadeInFromBottom} className="border-gray-300 mb-8" />
+        <motion.div variants={staggerContainer} className="flex flex-col lg:flex-row gap-12">
           {/* Left: Intro */}
-          <div className="flex-1">
-            <p className="text-2xl font-bold mb-2"><span className="font-extrabold">Have an idea?</span> <span className="font-normal text-lg align-middle">We're always looking for passionate clients and talented professionals to join us in creating impactful work. Whether you have a bold vision you want to bring to life or expertise to contribute, let's collaborate and make something great together.</span></p>
-            <div className="mt-12">
+          <motion.div variants={fadeInFromBottom} className="flex-1">
+            <motion.p variants={fadeInFromBottom} className="text-2xl font-bold mb-2"><span className="font-extrabold">Have an idea?</span> <span className="font-normal text-lg align-middle">We're always looking for passionate clients and talented professionals to join us in creating impactful work. Whether you have a bold vision you want to bring to life or expertise to contribute, let's collaborate and make something great together.</span></motion.p>
+            <motion.div variants={fadeInFromBottom} className="mt-12">
               <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">• Get in touch</p>
               <form className="bg-white rounded-lg shadow p-6 w-full max-w-xl">
                 <div className="mb-4">
@@ -49,10 +77,10 @@ export default function ContactPage() {
                 </div>
                 <button type="submit" className="w-full py-2 rounded border border-gray-300 text-gray-400 font-semibold text-sm cursor-not-allowed bg-gray-50" disabled>SUBMIT</button>
               </form>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           {/* Right: FAQ */}
-          <div className="flex-1 flex flex-col justify-start mt-8 lg:mt-0">
+          <motion.div variants={fadeInFromBottom} className="flex-1 flex flex-col justify-start mt-8 lg:mt-0">
             <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">• FAQ</p>
             <div className="space-y-2">
               <div className="bg-white rounded shadow-sm p-4 text-gray-400 cursor-pointer select-none">What services do you offer?</div>
@@ -60,9 +88,9 @@ export default function ContactPage() {
               <div className="bg-white rounded shadow-sm p-4 text-gray-400 cursor-pointer select-none">How long does a typical project take?</div>
               <div className="bg-white rounded shadow-sm p-4 font-semibold text-black cursor-pointer select-none">Can you handle ongoing marketing and design support?</div>
             </div>
-          </div>
-        </div>
-      </main>
+          </motion.div>
+        </motion.div>
+      </motion.main>
       <Footer
         contactRef={dummyRef}
         footerRef={dummyDivRef}

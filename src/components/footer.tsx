@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
+import { useMemo } from 'react';
 
 interface FooterProps {
   contactRef: React.RefObject<HTMLElement | null>;
@@ -28,6 +29,8 @@ export default function Footer({
   servicesRef,
   pricingRef,
 }: FooterProps) {
+  const year = useMemo(() => new Date().getFullYear(), []);
+
   return (
     <footer ref={contactRef} className="bg-[#0A0A0A] text-white py-12 px-4 lg:px-12">
       <motion.div
@@ -40,7 +43,7 @@ export default function Footer({
         {/* Logo and Copyright */}
         <motion.div variants={fadeInFromBottom} className="flex flex-col items-center md:items-start text-center md:text-left">
           <span className="text-2xl font-bold tracking-wide mb-2">BANJAY®</span>
-          <p className="text-sm text-gray-400 mt-2">&copy; {new Date().getFullYear()} Banjay. All rights reserved.</p>
+          <p className="text-sm text-gray-400 mt-2">&copy; {year} Banjay. All rights reserved.</p>
           <div className="flex space-x-4 mt-4">
             <a href="#" className="text-gray-300 hover:text-white transition-colors">
               {/* Twitter Icon */}

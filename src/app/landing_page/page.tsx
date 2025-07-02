@@ -1,4 +1,3 @@
-
 'use client';
 
 import Footer from '@/components/footer';
@@ -16,10 +15,10 @@ export default function LandingPage() {
 
   // Data for team members (kept generic, focusing on team expertise)
   const teamMembers = [
-    { id: 1, src: "https://placehold.co/400x500/000000/FFFFFF?text=AI+Engineer" },
-    { id: 2, src: "https://placehold.co/400x500/000000/FFFFFF?text=Data+Scientist" },
-    { id: 3, src: "https://placehold.co/400x500/000000/FFFFFF?text=GIS+Specialist" },
-    { id: 4, src: "https://placehold.co/400x500/000000/FFFFFF?text=Hydrologist" },
+    { id: 1, src: "afin.jpg" },
+    { id: 2, src: "rievan1.png" },
+    { id: 3, src: "afin.jpg" },
+    { id: 4, src: "rievan1.png" },
   ];
 
   // Duplicate team members to create a seamless loop effect
@@ -45,28 +44,28 @@ export default function LandingPage() {
       title: "AI & LLM Model Development",
       description: "Building artificial intelligence and Large Language Models for comprehensive flood data analysis and accurate predictions.",
       tags: ["Machine Learning", "Deep Learning", "Natural Language Processing", "Flood Prediction"],
-      image: "https://placehold.co/600x400/E0E0E0/333333?text=AI+Model+Dev"
+      image: "llm_development.jpeg"
     },
     {
       id: 2,
       title: "Himawari Satellite Image Analysis",
       description: "Processing and analyzing Himawari BMKG satellite imagery to detect changes in water levels and cloud conditions relevant to floods.",
       tags: ["Satellite Imagery", "BMKG", "GIS", "Change Detection"],
-      image: "https://placehold.co/600x400/E0E0E0/333333?text=Satellite+Imagery"
+      image: "satelit.jpeg"
     },
     {
       id: 3,
       title: "Multi-Source Data Integration",
       description: "Combining historical flood data, verified journals, and surrounding environmental data for a holistic understanding.",
       tags: ["Historical Data", "Scientific Journals", "Environmental Data", "Big Data"],
-      image: "https://placehold.co/600x400/E0E0E0/333333?text=Data+Integration"
+      image: "Data_Integration.jpeg"
     },
     {
       id: 4,
       title: "Early Flood Warning System",
       description: "Designing and implementing an efficient early warning system for risk mitigation and rapid response to potential floods.",
       tags: ["Early Warning", "Disaster Mitigation", "Rapid Response", "Information System"],
-      image: "https://placehold.co/600x400/E0E0E0/333333?text=Early+Warning"
+      image: "flood.jpeg"
     },
   ];
 
@@ -76,37 +75,37 @@ export default function LandingPage() {
       id: 1,
       title: "Data Collection & Briefing",
       description: "Understanding project needs, collecting Himawari satellite imagery, historical data, journals, and environmental data.",
-      image: "https://placehold.co/320x180/F0F0F0/333333?text=Data+Collection"
+      image: "data_colection.jpeg"
     },
     {
       id: 2,
       title: "System Design & Architecture",
       description: "Designing AI and LLM architecture, and planning data integration from various sources.",
-      image: "https://placehold.co/320x180/E0E0E0/333333?text=System+Design"
+      image: "design_system.jpeg"
     },
     {
       id: 3,
       title: "Model Development & Training",
       description: "Building AI and LLM models, training them with relevant data, and performing initial validation.",
-      image: "https://placehold.co/320x180/D0D0D0/333333?text=Model+Training"
+      image: "model_development.jpeg"
     },
     {
       id: 4,
       title: "Integration & Testing",
       description: "Integrating the models into the monitoring system and conducting thorough testing for accuracy and performance.",
-      image: "https://placehold.co/320x180/C0C0C0/333333?text=Integration+Test"
+      image: "testing.jpeg"
     },
     {
       id: 5,
       title: "Implementation & Launch",
       description: "Deploying the early flood warning system and launching it for operational use.",
-      image: "https://placehold.co/320x180/B0B0B0/333333?text=Deployment"
+      image: "implementation.jpeg"
     },
     {
       id: 6,
       title: "Continuous Monitoring & Optimization",
       description: "Continuously monitoring system performance, gathering feedback, and performing optimizations for improvement.",
-      image: "https://placehold.co/320x180/A0A0A0/333333?text=Monitoring"
+      image: "optimization.jpeg"
     },
   ];
 
@@ -247,7 +246,11 @@ export default function LandingPage() {
         scrollToSection={scrollToSection}
         homeRef={homeRef}
         projectsRef={projectsRef}
-        aboutRef={aboutRef}
+        teamRef={aboutRef}
+        servicesRef={servicesRef}
+        processRef={processRef}
+        pricingRef={pricingRef}
+        contactRef={contactRef}
       />
 
       {/* Main Content Section */}
@@ -271,7 +274,7 @@ export default function LandingPage() {
               </motion.p>
               <motion.div variants={fadeInFromBottom} className="flex flex-col sm:flex-row lg:justify-end space-y-3 sm:space-y-0 sm:space-x-3">
                 <button className="px-6 py-3 bg-black border border-black text-white rounded-full text-base font-medium hover:bg-gray-800 transition-colors">
-                  LEARN MORE
+                  TRY OUR DEMO
                 </button>
               </motion.div>
             </div>
@@ -623,7 +626,7 @@ export default function LandingPage() {
           variants={staggerContainer}
           className="max-w-7xl mx-auto w-full text-center mb-16"
         >
-          <motion.p variants={fadeInFromBottom} className="text-sm uppercase tracking-widest text-gray-500 mb-4">• INVESTMENT</motion.p>
+          <motion.p variants={fadeInFromBottom} className="text-sm uppercase tracking-widest text-gray-500 mb-4">• Pricing</motion.p>
           <motion.h2 variants={fadeInFromBottom} className="text-5xl sm:text-6xl lg:text-7xl font-light leading-tight mb-8">
             Project Packages
           </motion.h2>
@@ -738,7 +741,6 @@ export default function LandingPage() {
         servicesRef={servicesRef}
         pricingRef={pricingRef}
       />
-import Footer from '@/components/footer';
     </div>
   );
 }

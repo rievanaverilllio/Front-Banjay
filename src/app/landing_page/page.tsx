@@ -17,9 +17,9 @@ export default function LandingPage() {
 
   // Data for team members (kept generic, focusing on team expertise)
   const teamMembers = [
-    { id: 1, src: "afin.jpg" },
+    { id: 1, src: "afin1.jpg" },
     { id: 2, src: "rievan1.png" },
-    { id: 3, src: "afin.jpg" },
+    { id: 3, src: "afin1.jpg" },
     { id: 4, src: "rievan1.png" },
   ];
 

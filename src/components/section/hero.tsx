@@ -39,7 +39,7 @@ export default function HeroSection({ sectionRef }: Props) {
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
           <div className="text-left mb-4 lg:mb-0">
-            <motion.h1 variants={fadeInFromBottom} className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight">
+            <motion.h1 variants={fadeInFromBottom} className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight tracking-tight">
               AI for Early Flood Monitoring: <br /> Banjay
             </motion.h1>
           </div>

@@ -1,10 +1,9 @@
+
 "use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 
 export default function ForgotPasswordPage() {
 	const [email, setEmail] = useState("");
@@ -18,17 +17,7 @@ export default function ForgotPasswordPage() {
 	const [confirmLoading, setConfirmLoading] = useState(false);
 	const router = useRouter();
 
-	const [mainContentRef, mainContentInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
-	const fadeInFromBottom = {
-		hidden: { opacity: 0, y: 50 },
-		visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' as const } },
-	};
-
-	const staggerContainer = {
-		hidden: { opacity: 1 },
-		visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
-	};
+	// Animations removed: static rendering only
 
 	const handleSend = () => {
 		setError("");
@@ -97,21 +86,15 @@ export default function ForgotPasswordPage() {
 				Home
 			</Link> */}
 			{/* Left: Form */}
-			<motion.div
-				ref={mainContentRef}
-				initial="hidden"
-				animate={mainContentInView ? "visible" : "hidden"}
-				variants={staggerContainer}
-				className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black"
-			>
-				<motion.p variants={fadeInFromBottom} className="text-xs text-gray-600 mb-1">RESET YOUR PASSWORD</motion.p>
-				<motion.h2 variants={fadeInFromBottom} className="text-3xl sm:text-4xl font-extrabold text-black mb-2 flex items-center">
+			<div className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black">
+				<p className="text-xs text-gray-600 mb-1">RESET YOUR PASSWORD</p>
+				<h2 className="text-3xl sm:text-4xl font-semibold text-black mb-2 flex items-center">
 					Forgot password
 					<span className="text-gray-700 ml-1 text-4xl">.</span>
-				</motion.h2>
-				<motion.p variants={fadeInFromBottom} className="text-sm text-gray-600 mb-6">Masukkan email kamu untuk menerima kode verifikasi. <Link href="/auth/login" className="text-black hover:underline">Kembali login?</Link></motion.p>
+				</h2>
+				<p className="text-sm text-gray-600 mb-6">Masukkan email kamu untuk menerima kode verifikasi. <Link href="/auth/login" className="text-black hover:underline">Kembali login?</Link></p>
 				<div className="space-y-6 max-w-md">
-					<motion.div variants={fadeInFromBottom}>
+					<div>
 						<label className="block text-xs text-gray-600 mb-1">Email</label>
 						<div className="flex gap-2">
 							<div className="relative flex-1">
@@ -137,47 +120,47 @@ export default function ForgotPasswordPage() {
 							</button>
 						</div>
 						{error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-					</motion.div>
-					{/* Code Inputs */}
-					{codeRequested && (
-						<motion.div variants={fadeInFromBottom} className="space-y-4">
-							<p className="text-xs text-gray-600">Masukkan kode verifikasi 6 digit yang kami kirim ke <span className="font-medium">{email}</span>.</p>
-							<div className="flex gap-2">
-								{code.map((d, i) => (
-									<input
-										key={i}
-										ref={(el) => { inputsRef.current[i] = el; }}
-										inputMode="numeric"
-										pattern="[0-9]*"
-										maxLength={1}
-										value={d}
-										onChange={(e) => handleChangeDigit(i, e.target.value)}
-										onKeyDown={(e) => handleKeyDown(i, e)}
-										onPaste={i===0 ? handlePaste : undefined}
-										className="w-12 h-12 text-center text-lg font-semibold rounded-lg border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
-										placeholder="_"
-									/>
-								))}
-							</div>
-							{codeError && <p className="text-red-500 text-xs">{codeError}</p>}
-							<div className="flex items-center gap-4 text-xs text-gray-500">
-								<button type="button" onClick={() => { setCode(Array(CODE_LENGTH).fill("")); inputsRef.current[0]?.focus(); }} className="underline hover:text-gray-700">Reset kode</button>
-								<button type="button" onClick={() => { handleSend(); }} className="underline hover:text-gray-700">Kirim ulang</button>
-							</div>
-							<div>
-								<button
-									onClick={handleConfirm}
-									disabled={confirmLoading || code.some(d => !d)}
-									className="w-full py-2 rounded-full bg-black hover:bg-gray-800 disabled:opacity-60 text-white font-semibold text-sm transition flex items-center justify-center gap-2"
-								>
-									{confirmLoading && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-									Konfirmasi kode
-								</button>
-							</div>
-						</motion.div>
-					)}
 				</div>
-			</motion.div>
+				{/* Code Inputs */}
+				{codeRequested && (
+					<div className="space-y-4">
+						<p className="text-xs text-gray-600">Masukkan kode verifikasi 6 digit yang kami kirim ke <span className="font-medium">{email}</span>.</p>
+						<div className="flex gap-2">
+							{code.map((d, i) => (
+								<input
+									key={i}
+									ref={(el) => { inputsRef.current[i] = el; }}
+									inputMode="numeric"
+									pattern="[0-9]*"
+									maxLength={1}
+									value={d}
+									onChange={(e) => handleChangeDigit(i, e.target.value)}
+									onKeyDown={(e) => handleKeyDown(i, e)}
+									onPaste={i===0 ? handlePaste : undefined}
+									className="w-12 h-12 text-center text-lg font-semibold rounded-lg border border-gray-300 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+									placeholder="_"
+									/>
+							))}
+						</div>
+						{codeError && <p className="text-red-500 text-xs">{codeError}</p>}
+						<div className="flex items-center gap-4 text-xs text-gray-500">
+							<button type="button" onClick={() => { setCode(Array(CODE_LENGTH).fill("")); inputsRef.current[0]?.focus(); }} className="underline hover:text-gray-700">Reset kode</button>
+							<button type="button" onClick={() => { handleSend(); }} className="underline hover:text-gray-700">Kirim ulang</button>
+						</div>
+						<div>
+							<button
+								onClick={handleConfirm}
+								disabled={confirmLoading || code.some(d => !d)}
+								className="w-full py-2 rounded-full bg-black hover:bg-gray-800 disabled:opacity-60 text-white font-semibold text-sm transition flex items-center justify-center gap-2"
+							>
+								{confirmLoading && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+								Konfirmasi kode
+							</button>
+						</div>
+					</div>
+				)}
+			</div>
+		</div>
 			{/* Right: Image */}
 			<div className="hidden md:block w-[45%] relative min-h-screen">
 				<div className="absolute inset-0 bg-gradient-to-br from-black/70 to-transparent z-10" />

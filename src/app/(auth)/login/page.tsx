@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,22 +11,7 @@ export default function LoginPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
 
-  const [mainContentRef, mainContentInView] = useInView({ triggerOnce: true, threshold: 0.1 });
-
-  const fadeInFromBottom = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' as const } },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 1 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1, // Delay between children animations
-      },
-    },
-  };
+  // Animations removed: static rendering only
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,23 +44,16 @@ export default function LoginPage() {
         Home
       </Link> */}
       {/* Left: Form Section */}
-      <motion.div
-        ref={mainContentRef}
-        initial="hidden"
-        animate={mainContentInView ? "visible" : "hidden"}
-        variants={staggerContainer}
-        className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black"
-      >
-        <motion.p variants={fadeInFromBottom} className="text-xs text-gray-600 mb-1">START FOR FREE</motion.p>
-        <motion.h2 variants={fadeInFromBottom} className="text-3xl sm:text-4xl font-extrabold text-black mb-2 flex items-center">
+      <div className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black">
+        <p className="text-xs text-gray-600 mb-1">START FOR FREE</p>
+        <h2 className="text-3xl sm:text-4xl font-semibold text-black mb-2 flex items-center">
           Log in to your account
           <span className="text-gray-700 ml-1 text-4xl">.</span>
-        </motion.h2>
-        <motion.p variants={fadeInFromBottom} className="text-sm text-gray-600 mb-6">Not a member? <Link href="/signup" className="text-black hover:underline">Create account</Link></motion.p>
+        </h2>
+        <p className="text-sm text-gray-600 mb-6">Not a member? <Link href="/signup" className="text-black hover:underline">Create account</Link></p>
         <div className="w-full max-w-md">
           {/* Google Login Button */}
-          <motion.button
-            variants={fadeInFromBottom}
+          <button
             type="button"
             onClick={handleGoogleLogin}
             disabled={googleLoading}
@@ -94,14 +70,14 @@ export default function LoginPage() {
               </svg>
             )}
             <span className="leading-none">Sign in with Google</span>
-          </motion.button>
-          <motion.div variants={fadeInFromBottom} className="flex items-center gap-3 my-6">
+            </button>
+          <div className="flex items-center gap-3 my-6">
             <span className="h-px flex-1 bg-gray-200" />
             <span className="text-[10px] tracking-wider text-gray-500 font-medium uppercase">or</span>
             <span className="h-px flex-1 bg-gray-200" />
-          </motion.div>
+          </div>
           <form className="space-y-4" onSubmit={handleLogin}>
-          <motion.div variants={fadeInFromBottom}>
+          <div>
             <label className="block text-xs text-gray-600 mb-1">Email</label>
             <div className="relative">
               <input type="email" className="w-full px-4 py-2 rounded bg-gray-100 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10" placeholder="johndoe@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -109,8 +85,8 @@ export default function LoginPage() {
                 <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17.5v-11Zm2.5-.5a.5.5 0 0 0-.5.5v.217l8 5.333 8-5.333V6.5a.5.5 0 0 0-.5-.5h-15Zm15 13a.5.5 0 0 0 .5-.5V9.217l-7.51 5.006a1 1 0 0 1-1.08 0L4 9.217V17.5a.5.5 0 0 0 .5.5h15Z"/></svg>
               </span>
             </div>
-          </motion.div>
-          <motion.div variants={fadeInFromBottom}>
+          </div>
+          <div>
             <label className="block text-xs text-gray-600 mb-1">Password</label>
             <div className="relative">
               <input type="password" className="w-full px-4 py-2 rounded bg-gray-100 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -123,12 +99,12 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-          </motion.div>
-          {error && <motion.p variants={fadeInFromBottom} className="text-red-500 text-sm mt-2">{error}</motion.p>}
-          <motion.button variants={fadeInFromBottom} type="submit" className="w-full py-2 rounded-full bg-black hover:bg-gray-800 text-white font-semibold text-base transition mt-2">Log In</motion.button>
+          </div>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          <button type="submit" className="w-full py-2 rounded-full bg-black hover:bg-gray-800 text-white font-semibold text-base transition mt-2">Log In</button>
         </form>
         </div>
-      </motion.div>
+  </div>
       {/* Right: Image Section */}
       <div className="hidden md:block w-[45%] relative min-h-screen">
         <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-transparent z-10" />

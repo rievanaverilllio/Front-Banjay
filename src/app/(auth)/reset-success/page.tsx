@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function ResetSuccessPage() {
@@ -30,9 +29,9 @@ export default function ResetSuccessPage() {
 				Home
 			</Link> */}
 			<div className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black">
-				<motion.div initial="hidden" animate="visible" variants={fade} className="max-w-md">
+				<div className="max-w-md">
 					<p className="text-xs text-gray-600 mb-2 tracking-wide">PASSWORD RESET</p>
-					<h1 className="text-3xl sm:text-4xl font-extrabold mb-4 flex items-center">Password updated<span className="text-gray-700 ml-1 text-4xl">.</span></h1>
+					<h1 className="text-3xl sm:text-4xl font-semibold mb-4 flex items-center">Password updated<span className="text-gray-700 ml-1 text-4xl">.</span></h1>
 					<div className="mb-6 text-sm text-gray-600 leading-relaxed">
 						Password kamu berhasil diperbarui. Kamu bisa langsung kembali login dan melanjutkan aktivitas.
 					</div>
@@ -53,7 +52,7 @@ export default function ResetSuccessPage() {
 					<div className="mt-10 text-[11px] text-gray-400 tracking-wide">
 						Jika ini bukan kamu, segera hubungi support.
 					</div>
-				</motion.div>
+				</div>
 			</div>
 			<div className="hidden md:block w-[45%] relative min-h-screen">
 				<div className="absolute inset-0 bg-gradient-to-br from-black/70 to-transparent z-10" />

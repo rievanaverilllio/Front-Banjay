@@ -59,7 +59,7 @@ export default function ServicesSection({ sectionRef, items }: Props) {
                     <span className="text-3xl font-bold text-gray-400 mr-4">{item.id}</span>
                     <p className="text-lg font-semibold text-black">• {item.title}</p>
                   </div>
-                  <h3 className="text-4xl font-bold text-black mb-4">{item.title}</h3>
+                  <h3 className="text-4xl font-semibold text-black mb-4">{item.title}</h3>
                   <p className="text-gray-700 mb-6 max-w-md">{item.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {item.tags.map((tag, tagIndex) => (

@@ -56,10 +56,10 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex relative bg-[#FAFAF5]">
       {/* Kembali ke Home Button */}
-      <Link href="/dashboard" className="absolute top-6 left-6 z-20 flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full bg-white hover:bg-gray-100 hover:text-black transition font-medium text-sm shadow">
+      {/* <Link href="/dashboard" className="absolute top-6 left-6 z-20 flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full bg-white hover:bg-gray-100 hover:text-black transition font-medium text-sm shadow">
         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
         Home
-      </Link>
+      </Link> */}
       {/* Left: Form Section */}
       <motion.div
         ref={mainContentRef}

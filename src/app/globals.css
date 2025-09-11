@@ -83,6 +83,12 @@ body {
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
+/* Ensure a sane sans-serif fallback stack is used for all sans text */
+:root {
+  --font-geist-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono", "SF Mono", "Helvetica Neue", monospace;
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -119,9 +125,15 @@ body {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    /* Minimal non-Tailwind replacements for project variables */
+    border-color: var(--border);
+    outline-color: var(--ring);
   }
   body {
-    @apply bg-background text-foreground;
+  /* Use CSS variables instead of Tailwind @apply so linters without Tailwind pass */
+  background: var(--background);
+  color: var(--foreground);
+  /* Force the global font to the sans-serif stack */
+  font-family: var(--font-sans);
   }
 }

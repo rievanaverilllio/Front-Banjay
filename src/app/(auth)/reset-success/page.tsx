@@ -25,10 +25,10 @@ export default function ResetSuccessPage() {
 
 	return (
 		<div className="min-h-screen w-full flex relative bg-[#FAFAF5]">
-			<Link href="/dashboard" className="absolute top-6 left-6 z-20 flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full bg-white hover:bg-gray-100 hover:text-black transition font-medium text-sm shadow">
+			{/* <Link href="/dashboard" className="absolute top-6 left-6 z-20 flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full bg-white hover:bg-gray-100 hover:text-black transition font-medium text-sm shadow">
 				<svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
 				Home
-			</Link>
+			</Link> */}
 			<div className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black">
 				<motion.div initial="hidden" animate="visible" variants={fade} className="max-w-md">
 					<p className="text-xs text-gray-600 mb-2 tracking-wide">PASSWORD RESET</p>

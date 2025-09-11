@@ -38,8 +38,8 @@ export default function NotFound() {
         .notfound-root { min-height: 100vh; display:flex; align-items:center; justify-content:center; background: var(--nf-bg); }
         .notfound-inner { text-align:center; max-width: 1100px; width:100%; padding: 48px 24px; }
         .subtitle { margin:0 auto 28px; color: rgba(15,23,42,0.8); font-size:18px; }
-        .big-404 { display:flex; align-items:center; justify-content:center; gap:40px; margin: 10px 0 34px; }
-        .big-404 .digit { color: var(--nf-text); font-size: clamp(120px, 18vw, 240px); font-weight:700; line-height:0.85; font-family: var(--font-sans, ui-sans-serif); }
+        .big-404 { display:flex; align-items:center; justify-content:center; margin: 10px 0 34px; }
+        .big-404 .digit { color: var(--nf-text); font-size: clamp(120px, 18vw, 240px); font-weight:700; line-height:0.85; font-family: var(--font-sans, ui-sans-serif); letter-spacing: -0.02em; }
         .asterisk { color: var(--nf-text); width: clamp(120px, 20vw, 320px); height: auto; display:block; }
         .home-btn { --btn-bg: var(--nf-accent); display:inline-block; padding:14px 36px; background:var(--btn-bg); color:var(--primary-foreground, #fff); border-radius:8px; text-decoration:none; font-weight:600; position:relative; }
         /* small decorative triangles on left/right to mimic the design */
@@ -49,7 +49,7 @@ export default function NotFound() {
 
         /* subtle responsive tweaks */
         @media (max-width:700px) {
-          .big-404 { gap:14px; }
+          .big-404 { gap:8px; }
           .subtitle { font-size:15px; }
           .home-btn { padding:10px 20px; }
         }

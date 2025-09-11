@@ -92,7 +92,7 @@ export default function ForgotPasswordPage() {
 					Forgot password
 					<span className="text-gray-700 ml-1 text-4xl">.</span>
 				</h2>
-				<p className="text-sm text-gray-600 mb-6">Masukkan email kamu untuk menerima kode verifikasi. <Link href="/auth/login" className="text-black hover:underline">Kembali login?</Link></p>
+				<p className="text-sm text-gray-600 mb-6">Masukkan email kamu untuk menerima kode verifikasi. <Link href="/login" className="text-black hover:underline">Kembali login?</Link></p>
 				<div className="space-y-6 max-w-md">
 					<div>
 						<label className="block text-xs text-gray-600 mb-1">Email</label>

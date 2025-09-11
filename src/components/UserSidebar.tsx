@@ -32,22 +32,22 @@ const UserSidebar: React.FC<UserSidebarProps> = ({ isSidebarOpen }) => {
               </Link>
             </li>
             <li className="mb-2">
-              <Link href="#" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
+              <Link href="/user/statistics" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
                 <FaChartBar className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Statistics</span>}
               </Link>
             </li>
             <li className="mb-2">
-              <Link href="#" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
+              <Link href="/user/reports" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
                 <FaUserMd className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Flood Reports</span>}
               </Link>
             </li>
-            <li className="mb-2">
-              <Link href="#" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
+            {/* <li className="mb-2">
+              <Link href="/user/messages" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
                 <FaEnvelope className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Messages</span>}
               </Link>
-            </li>
+            </li> */}
             <li className="mb-2">
-              <Link href="#" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
+              <Link href="/user/documents" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
                 <FaFileAlt className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Documents</span>}
               </Link>
             </li>
@@ -57,17 +57,17 @@ const UserSidebar: React.FC<UserSidebarProps> = ({ isSidebarOpen }) => {
       <div className="mt-auto">
         <ul>
           <li className="mb-2">
-            <Link href="#" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
+            <Link href="/user/settings" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
               <FaCog className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Settings</span>}
             </Link>
           </li>
           <li className="mb-2">
-            <Link href="/contact" className={`flex items-center p-2 rounded-lg ${pathname === '/contact' ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-600'}`}>
+            <Link href="/user/contact" className={`flex items-center p-2 rounded-lg ${pathname === '/contact' ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-600'}`}>
               <FaEnvelope className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Contact</span>}
             </Link>
           </li>
           <li className="mb-2">
-            <Link href="#" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
+            <Link href="/user/help" className="flex items-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 hover:text-gray-600">
               <FaHeadset className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Help</span>}
             </Link>
           </li>

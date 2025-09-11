@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { FaChartPie, FaWater, FaExclamationTriangle, FaHistory, FaFileAlt, FaSyncAlt, FaUserShield, FaCog } from 'react-icons/fa';
 
 interface AdminSidebarProps {
@@ -11,58 +12,64 @@ interface AdminSidebarProps {
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ isSidebarOpen }) => {
   const pathname = usePathname();
+  const baseItem = 'flex items-center p-2 rounded-lg transition-colors';
+  const inactive = 'text-gray-700 hover:bg-gray-100 hover:text-gray-600';
+  const active = 'bg-blue-100 text-blue-600 font-semibold';
+
   return (
-    <aside className={`bg-gray-200 text-gray-800 flex flex-col p-4 shadow-lg transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-      <div className="flex items-center text-xl font-bold mb-8 text-white">
-        <img src="/favicon.png" alt="BANJAY Logo" className="h-8 w-8 mr-2" />
-        {isSidebarOpen && <span className="text-gray-800">BANJAY</span>}
+    <aside className={`bg-white p-4 shadow-lg flex flex-col justify-between rounded-lg transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+      <div>
+        <div className="flex items-center text-xl font-bold mb-8 text-black">
+          <img src="/favicon.png" alt="BANJAY Logo" className="h-8 w-8 mr-2" />
+          {isSidebarOpen && <span>BANJAY</span>}
+        </div>
+        <nav className="flex-1">
+          <ul>
+            <li className="mb-2">
+              <Link href="/admin/dashboard" className={`${baseItem} ${pathname === '/admin/dashboard' ? active : inactive}`}>
+                <FaChartPie className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Dashboard</span>}
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link href="/admin/input_data" className={`${baseItem} ${pathname === '/admin/input_data' ? active : inactive}`}>
+                <FaWater className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Input Data</span>}
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link href="#" className={`${baseItem} ${inactive}`}>
+                <FaExclamationTriangle className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <><span>Alerts</span> <span className="ml-auto text-xs bg-red-500 text-white rounded-full px-2 py-0.5">5</span></>}
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link href="#" className={`${baseItem} ${inactive}`}>
+                <FaHistory className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Historical Data</span>}
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link href="#" className={`${baseItem} ${inactive}`}>
+                <FaFileAlt className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Reports</span>}
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link href="#" className={`${baseItem} ${inactive}`}>
+                <FaSyncAlt className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Integrations</span>}
+              </Link>
+            </li>
+            <li className="mb-2">
+              <Link href="#" className={`${baseItem} ${inactive}`}>
+                <FaUserShield className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Personnel</span>}
+              </Link>
+            </li>
+          </ul>
+        </nav>
       </div>
-      <nav className="flex-1">
-        <ul>
-          <li className="mb-2">
-            <a href="/admin/dashboard" className={`flex items-center p-2 rounded-lg hover:bg-gray-300 ${pathname === '/admin/dashboard' ? 'bg-blue-100 text-blue-600 font-semibold' : 'text-gray-800'}`}>
-              <FaChartPie className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Dashboard</span>}
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="/admin/input_data" className={`flex items-center p-2 rounded-lg hover:bg-gray-300 ${pathname === '/admin/input_data' ? 'bg-blue-100 text-blue-600 font-semibold' : ''}`}>
-              <FaWater className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Input Data</span>}
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800">
-              <FaExclamationTriangle className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Alerts</span>} {isSidebarOpen && <span className="ml-auto text-xs bg-red-500 rounded-full px-2 py-1">5</span>}
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800">
-              <FaHistory className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Historical Data</span>}
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800">
-              <FaFileAlt className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Reports</span>}
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800">
-              <FaSyncAlt className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Integrations</span>}
-            </a>
-          </li>
-          <li className="mb-2">
-            <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800">
-              <FaUserShield className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Personnel</span>}
-            </a>
-          </li>
-        </ul>
-      </nav>
       <div className="mt-auto">
-        <a href="#" className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800">
-          <FaCog className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span className="text-gray-800">Settings</span>}
-        </a>
+        <Link href="#" className={`${baseItem} ${inactive}`}>
+          <FaCog className={`${isSidebarOpen ? 'mr-3' : 'mr-0'}`} /> {isSidebarOpen && <span>Settings</span>}
+        </Link>
       </div>
     </aside>
   );
 };
 
-export default AdminSidebar; 
+export default AdminSidebar;

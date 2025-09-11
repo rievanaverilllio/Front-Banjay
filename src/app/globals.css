@@ -45,7 +45,9 @@
 
 html,
 body {
-  overflow: hidden;
+  /* Allow page scrolling by default; previously hidden prevented scrolling on pages like admin/dashboard */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 :root {

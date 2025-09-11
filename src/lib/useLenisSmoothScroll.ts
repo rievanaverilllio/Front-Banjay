@@ -4,6 +4,12 @@ import Lenis from '@studio-freight/lenis';
 
 export function useLenisSmoothScroll() {
   useEffect(() => {
+    // Don't initialize Lenis on touch devices / mobile — let native scrolling handle touch.
+    if (typeof window !== 'undefined') {
+      const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) || /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+      if (isTouch) return;
+    }
+    
     const lenis = new Lenis({
       duration: 0.5, // slow and smooth
       // smooth: true, // Not needed for Lenis v1+, default is smooth

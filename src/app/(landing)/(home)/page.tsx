@@ -201,7 +201,7 @@ export default function LandingPage() {
 
 
   return (
-    <div className="bg-[#0A0A0A] text-white font-sans flex flex-col overflow-x-hidden scroll-smooth">
+    <div className="bg-[#0A0A0A] text-white font-sans flex flex-col overflow-x-hidden overflow-y-auto">
       <Navbar
         scrollToSection={scrollToSection}
         homeRef={homeRef}

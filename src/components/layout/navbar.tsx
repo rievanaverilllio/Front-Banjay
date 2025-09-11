@@ -24,7 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrollToSection, homeRef, projectsRef, 
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="fixed top-0 left-0 right-0 z-20 px-6 py-4 flex justify-between items-center bg-white text-black shadow-md"
     >
-      <Link href="/dashboard" className="flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-md cursor-pointer">
+      <Link href="/" className="flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-md cursor-pointer">
         <img src="/favicon.png" alt="Logo" className="w-10 h-10 mr-2 ml-2 transition-transform group-hover:scale-105" />
         <span className="text-lg font-bold text-black tracking-wide group-hover:text-gray-800">BANJAY</span>
       </Link>

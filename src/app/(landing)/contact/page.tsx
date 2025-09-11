@@ -50,12 +50,12 @@ export default function ContactPage() {
         variants={staggerContainer}
         className="flex-1 max-w-7xl mx-auto w-full px-4 pt-32 pb-16"
       >
-        <motion.h1 variants={fadeInFromBottom} className="text-5xl font-bold mb-2">Contact</motion.h1>
+        <motion.h1 variants={fadeInFromBottom} className="text-5xl font-semibold mb-2">Contact</motion.h1>
         <motion.hr variants={fadeInFromBottom} className="border-gray-300 mb-8" />
         <motion.div variants={staggerContainer} className="flex flex-col lg:flex-row gap-12">
           {/* Left: Intro */}
           <motion.div variants={fadeInFromBottom} className="flex-1">
-            <motion.p variants={fadeInFromBottom} className="text-2xl font-bold mb-2"><span className="font-extrabold">Have an idea?</span> <span className="font-normal text-lg align-middle">We're always looking for passionate clients and talented professionals to join us in creating impactful work. Whether you have a bold vision you want to bring to life or expertise to contribute, let's collaborate and make something great together.</span></motion.p>
+            <motion.p variants={fadeInFromBottom} className="text-2xl font-bold mb-2"><span className="font-semibold">Have an idea?</span> <span className="font-normal text-lg align-middle">We're always looking for passionate clients and talented professionals to join us in creating impactful work. Whether you have a bold vision you want to bring to life or expertise to contribute, let's collaborate and make something great together.</span></motion.p>
             <motion.div variants={fadeInFromBottom} className="mt-12">
               <p className="text-xs uppercase tracking-widest text-gray-500 mb-2">• Get in touch</p>
               <form className="bg-white rounded-lg shadow p-6 w-full max-w-xl">

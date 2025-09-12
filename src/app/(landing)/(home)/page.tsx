@@ -1,14 +1,14 @@
 'use client';
 
-import Footer from '@/components/footer-landing';
-import Navbar from '@/components/nav-landing';
-import HeroSection from '@/components/section/hero';
-import AchievementsSection from '@/components/section/achievements';
-import CtaArrowsSection from '@/components/section/cta-arrows';
-import TeamSection from '@/components/section/team';
-import ServicesSection from '@/components/section/services';
-import ProcessSection from '@/components/section/process';
-import PricingSection from '@/components/section/pricing';
+import Footer from '@/components/section/landing/footer-landing';
+import Navbar from '@/components/section/landing/nav-landing';
+import HeroSection from '@/components/section/landing/hero';
+import AchievementsSection from '@/components/section/landing/achievements';
+import CtaArrowsSection from '@/components/section/landing/cta-arrows';
+import TeamSection from '@/components/section/landing/team';
+import ServicesSection from '@/components/section/landing/services';
+import ProcessSection from '@/components/section/landing/process';
+import PricingSection from '@/components/section/landing/pricing';
 
 import { useLenisSmoothScroll } from '@/lib/useLenisSmoothScroll';
 import { useInView } from 'react-intersection-observer';

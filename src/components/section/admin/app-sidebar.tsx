@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image";
 import * as React from "react"
 import {
   IconCamera,
@@ -17,6 +18,11 @@ import {
   IconSearch,
   IconSettings,
   IconUsers,
+  // Added for new menu items
+  IconMapPin,
+  IconCloudRain,
+  IconBell,
+  IconLifebuoy,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/section/admin/nav-documents"
@@ -46,24 +52,34 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
+      title: "Peta Lokasi",
       url: "#",
-      icon: IconListDetails,
+      icon: IconMapPin,
     },
     {
-      title: "Analytics",
+      title: "Data Curah Hujan",
+      url: "#",
+      icon: IconCloudRain,
+    },
+    {
+      title: "Laporan Masyarakat",
+      url: "#",
+      icon: IconReport,
+    },
+    {
+      title: "Notifikasi / Peringatan Dini",
+      url: "#",
+      icon: IconBell,
+    },
+    {
+      title: "Posko & Kontak Darurat",
+      url: "#",
+      icon: IconLifebuoy,
+    },
+    {
+      title: "Statistik & Analisis",
       url: "#",
       icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
     },
   ],
   navClouds: [
@@ -116,34 +132,34 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Settings",
+      title: "Pengaturan",
       url: "#",
       icon: IconSettings,
     },
     {
-      title: "Get Help",
+      title: "Bantuan",
       url: "#",
       icon: IconHelp,
     },
     {
-      title: "Search",
+      title: "Cari",
       url: "#",
       icon: IconSearch,
     },
   ],
   documents: [
     {
-      name: "Data Library",
+      name: "Pustaka Data",
       url: "#",
       icon: IconDatabase,
     },
     {
-      name: "Reports",
+      name: "Laporan",
       url: "#",
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
+      name: "Asisten Dokumen",
       url: "#",
       icon: IconFileWord,
     },
@@ -161,8 +177,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <Image className="!size-8"
+                  src="/favicon.ico" 
+                  alt="Logo BANJAY" 
+                  width={20}
+                  height={20}
+                />
+                <span className="text-base font-semibold">BANJAY</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -154,11 +154,6 @@ const data = {
       icon: IconDatabase,
     },
     {
-      name: "Laporan",
-      url: "#",
-      icon: IconReport,
-    },
-    {
       name: "Asisten Dokumen",
       url: "#",
       icon: IconFileWord,

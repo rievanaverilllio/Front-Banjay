@@ -1,11 +1,7 @@
 const { PrismaClient, UserRole, UserStatus } = require("@prisma/client");
-const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
 const prisma = new PrismaClient();
-
-function sha256(text) {
-  return crypto.createHash("sha256").update(text).digest("hex");
-}
 
 async function main() {
   const users = [
@@ -44,7 +40,7 @@ async function main() {
         name: u.name,
         role: u.role,
         status: UserStatus.ACTIVE,
-        passwordHash: `sha256:${sha256(u.password)}`,
+        passwordHash: await bcrypt.hash(u.password, 10),
       },
     });
   }

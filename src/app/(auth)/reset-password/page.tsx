@@ -25,22 +25,33 @@ export default function ResetPasswordPage() {
 		setStrength(s as 0|1|2|3|4);
 	}, [password]);
 
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		setError("");
-		if (!password || password.length < 8) {
-			setError("Password minimal 8 karakter.");
-			return;
-		}
-		if (password !== confirm) {
-			setError("Konfirmasi password tidak sama.");
-			return;
-		}
-		setStatus("loading");
-		setTimeout(() => {
-			router.push("/reset-success");
-		}, 1400);
-	};
+		const handleSubmit = async (e: React.FormEvent) => {
+			e.preventDefault();
+			setError("");
+			if (!password || password.length < 8) {
+				setError("Password minimal 8 karakter.");
+				return;
+			}
+			if (password !== confirm) {
+				setError("Konfirmasi password tidak sama.");
+				return;
+			}
+			if (!token) {
+				setError("Token tidak ditemukan.");
+				return;
+			}
+			setStatus("loading");
+			try {
+				const res = await fetch("/api/auth/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, password }) })
+				const data = await res.json()
+				if (!res.ok) throw new Error(data.error || "Gagal reset password")
+				router.push("/reset-success");
+			} catch (err: any) {
+				setError(err.message || "Gagal reset password");
+			} finally {
+				setStatus("idle");
+			}
+		};
 
 	const strengthLabels = ["Sangat lemah", "Lemah", "Cukup", "Baik", "Kuat"];
 	const strengthColors = ["bg-red-400", "bg-orange-400", "bg-yellow-400", "bg-green-400", "bg-emerald-500"];

@@ -19,20 +19,24 @@ export default function ForgotPasswordPage() {
 
 	// Animations removed: static rendering only
 
-	const handleSend = () => {
+		const handleSend = async () => {
 		setError("");
 		setCodeError("");
 		if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
 			setError("Masukkan email yang valid.");
 			return;
 		}
-		setStatus("loading");
-		setTimeout(() => {
-			setStatus("idle");
-			setCodeRequested(true);
-			// fokus ke kotak pertama
-			setTimeout(() => inputsRef.current[0]?.focus(), 50);
-		}, 1000);
+			setStatus("loading");
+			try {
+				const res = await fetch("/api/auth/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) })
+				await res.json()
+				setStatus("idle");
+				setCodeRequested(true);
+				setTimeout(() => inputsRef.current[0]?.focus(), 50);
+			} catch {
+				setStatus("idle");
+				setError("Gagal mengirim kode. Coba lagi.");
+			}
 	};
 
 	const handleChangeDigit = (idx: number, val: string) => {
@@ -63,19 +67,23 @@ export default function ForgotPasswordPage() {
 		setCodeError("");
 	};
 
-	const handleConfirm = () => {
+		const handleConfirm = async () => {
 		if (confirmLoading) return;
 		if (code.some(d => d === "")) {
 			setCodeError("Lengkapi semua digit kode.");
 			return;
 		}
 		setCodeError("");
-		setConfirmLoading(true);
-		// Simulasi verifikasi kode
-		setTimeout(() => {
-			const fakeToken = btoa(`${email}-${Date.now()}`).replace(/=+$/,'');
-			router.push(`/reset-password?token=${fakeToken}`);
-		}, 1100);
+			setConfirmLoading(true);
+			try {
+				// In real app, we'd verify code server-side. For demo, we fetch latest token for this email.
+				const res = await fetch("/api/auth/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) })
+				const data = await res.json()
+				const token = data.token || btoa(`${email}-${Date.now()}`).replace(/=+$/,'')
+				router.push(`/reset-password?token=${token}`);
+			} finally {
+				setConfirmLoading(false);
+			}
 	};
 
 	return (

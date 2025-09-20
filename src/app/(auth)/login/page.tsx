@@ -13,16 +13,17 @@ export default function LoginPage() {
 
   // Animations removed: static rendering only
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
-
-    if (email === "user@user.com" && password === "user") {
-      router.push("/user/dashboard");
-    } else if (email === "admin@admin.com" && password === "admin") {
-      router.push("/admin/dashboard");
-    } else {
-      setError("Invalid email or password.");
+    setError("");
+    try {
+      const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Login gagal")
+      const role = data.role as "admin" | "user"
+      router.push(role === "admin" ? "/dashboard" : "/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Login gagal")
     }
   };
 
@@ -32,7 +33,7 @@ export default function LoginPage() {
     // TODO: Integrasi OAuth Google nyata (misal NextAuth / Firebase). Simulasi sementara:
     setTimeout(() => {
       setGoogleLoading(false);
-      router.push("/user/dashboard");
+      router.push("/dashboard");
     }, 1400);
   };
 

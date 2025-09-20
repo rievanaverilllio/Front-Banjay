@@ -48,114 +48,66 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
       title: "Peta Lokasi",
-      url: "#",
+      url: "/peta-lokasi",
       icon: IconMapPin,
     },
     {
       title: "Data Curah Hujan",
-      url: "#",
+      url: "/data-curah-hujan",
       icon: IconCloudRain,
     },
     {
       title: "Laporan Masyarakat",
-      url: "#",
+      url: "/laporan-masyarakat",
       icon: IconReport,
     },
     {
       title: "Notifikasi / Peringatan Dini",
-      url: "#",
+      url: "/notifikasi",
       icon: IconBell,
     },
     {
       title: "Posko & Kontak Darurat",
-      url: "#",
+      url: "/posko",
       icon: IconLifebuoy,
     },
     {
       title: "Statistik & Analisis",
-      url: "#",
+      url: "/statistik",
       icon: IconChartBar,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
     },
   ],
   navSecondary: [
     {
       title: "Pengaturan",
-      url: "#",
+      url: "/pengatura",
       icon: IconSettings,
     },
     {
       title: "Bantuan",
-      url: "#",
+      url: "/bantuan",
       icon: IconHelp,
     },
-    {
-      title: "Cari",
-      url: "#",
-      icon: IconSearch,
-    },
+    // {
+    //   title: "Cari",
+    //   url: "#",
+    //   icon: IconSearch,
+    // },
   ],
   documents: [
     {
       name: "Pustaka Data",
-      url: "#",
+      url: "pustaka-data",
       icon: IconDatabase,
     },
     {
       name: "Asisten Dokumen",
-      url: "#",
+      url: "asisten-dokumen",
       icon: IconFileWord,
     },
   ],

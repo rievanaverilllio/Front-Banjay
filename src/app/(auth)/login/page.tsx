@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
   const router = useRouter();
@@ -90,10 +91,26 @@ export default function LoginPage() {
           <div>
             <label className="block text-xs text-gray-600 mb-1">Password</label>
             <div className="relative">
-              <input type="password" className="w-full px-4 py-2 rounded bg-gray-100 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Zm10 9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v5Z"/></svg>
-              </span>
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full px-4 py-2 rounded bg-gray-100 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 pr-10"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                title={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 focus:outline-none"
+              >
+                {showPassword ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="currentColor" d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm0-5C7 3 2.73 6.11 1 11c1.73 4.89 6 8 11 8s9.27-3.11 11-8c-1.73-4.89-6-8-11-8zm0 14c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"/></svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9.27 3.11-11 8 1.73 4.89 6 8 11 8 5 0 9.27-3.11 11-8-1.73-4.89-6-8-11-8zm0 14c-3.31 0-6-2.69-6-6 0-1.39.45-2.67 1.2-3.71L17.71 17.8A5.95 5.95 0 0 1 12 19zm7.8-3.29L6.29 4.2A5.95 5.95 0 0 1 12 5c3.31 0 6 2.69 6 6 0 1.39-.45 2.67-1.2 3.71z"/></svg>
+                )}
+              </button>
             </div>
               <div className="mt-2 text-right">
                 <Link href="/forgot-password" className="text-xs font-medium text-gray-600 hover:text-black transition underline-offset-2 hover:underline">

@@ -94,8 +94,10 @@ export async function GET(req: Request) {
     const exp = iat + 60 * 60 * 24 * 7
     const session = await signToken({ sub: user.id, email: user.email, role, iat, exp }, process.env.AUTH_SECRET || "dev-secret")
 
-    const res = NextResponse.redirect(new URL(process.env.POST_LOGIN_REDIRECT || "/dashboard", url.origin), 302)
-    res.cookies.set("token", session, { httpOnly: true, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 })
+  const res = NextResponse.redirect(new URL(process.env.POST_LOGIN_REDIRECT || "/dashboard", url.origin), 302)
+  res.cookies.set("token", session, { httpOnly: true, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 })
+  // Mark that the session came from Google OAuth
+  res.cookies.set("oauth_provider", "google", { httpOnly: false, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 })
     res.cookies.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
     return res
   } catch (e) {

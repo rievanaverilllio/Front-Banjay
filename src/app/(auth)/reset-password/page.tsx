@@ -8,6 +8,8 @@ export default function ResetPasswordPage() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const token = searchParams.get("token");
+	const email = searchParams.get("email");
+	const code = searchParams.get("code");
 
 	const [password, setPassword] = useState("");
 	const [confirm, setConfirm] = useState("");
@@ -36,13 +38,16 @@ export default function ResetPasswordPage() {
 				setError("Konfirmasi password tidak sama.");
 				return;
 			}
-			if (!token) {
-				setError("Token tidak ditemukan.");
+			if (!token && !(email && code)) {
+				setError("Token atau (email + kode) tidak ditemukan.");
 				return;
 			}
 			setStatus("loading");
 			try {
-				const res = await fetch("/api/auth/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token, password }) })
+				const payload: any = { password };
+				if (token) payload.token = token;
+				else { payload.email = email; payload.code = code; }
+				const res = await fetch("/api/auth/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
 				const data = await res.json()
 				if (!res.ok) throw new Error(data.error || "Gagal reset password")
 				router.push("/reset-success");
@@ -65,8 +70,14 @@ export default function ResetPasswordPage() {
 					<span className="text-gray-700 ml-1 text-4xl">.</span>
 				</h2>
 				<p className="text-sm text-gray-600 mb-6">Buat password baru untuk akun kamu. <Link href="/login" className="text-black hover:underline">Kembali login?</Link></p>
-				{token && (
-					<div className="text-[11px] tracking-wide text-gray-500 mb-4 select-all">Token: {token.slice(0,32)}{token.length>32 && '...'}</div>
+				{(token || (email && code)) && (
+					<div className="text-[11px] tracking-wide text-gray-500 mb-4 select-all">
+						{token ? (
+							<>Token: {token.slice(0,32)}{token.length>32 && '...'}</>
+						) : (
+							<>Email: {email} • Code: {code}</>
+						)}
+					</div>
 				)}
 				<form onSubmit={handleSubmit} className="space-y-5 max-w-md">
 					<div>
@@ -88,7 +99,7 @@ export default function ResetPasswordPage() {
 							<div className="flex-1 flex gap-1">
 								{[0,1,2,3].map(i => (
 									<span key={i} className={`h-1 w-full rounded ${strength > i ? strengthColors[strength] : 'bg-gray-200'}`}></span>
-									))}
+								))}
 							</div>
 							<span className="text-[10px] uppercase tracking-wide text-gray-500">{strengthLabels[strength]}</span>
 						</div>

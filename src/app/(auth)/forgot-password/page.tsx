@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef } from "react";
@@ -69,18 +68,25 @@ export default function ForgotPasswordPage() {
 
 		const handleConfirm = async () => {
 		if (confirmLoading) return;
-		if (code.some(d => d === "")) {
-			setCodeError("Lengkapi semua digit kode.");
+		const codeStr = code.join("");
+		if (!/^\d{6}$/.test(codeStr)) {
+			setCodeError("Kode harus 6 digit.");
 			return;
 		}
 		setCodeError("");
 			setConfirmLoading(true);
 			try {
-				// In real app, we'd verify code server-side. For demo, we fetch latest token for this email.
-				const res = await fetch("/api/auth/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) })
+				const res = await fetch("/api/auth/forgot-password/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, code: codeStr }) })
 				const data = await res.json()
-				const token = data.token || btoa(`${email}-${Date.now()}`).replace(/=+$/,'')
-				router.push(`/reset-password?token=${token}`);
+				if (!res.ok) {
+					setCodeError(data.error || "Kode tidak valid");
+					return;
+				}
+				const params = new URLSearchParams({ email, code: codeStr })
+				if (data.token) params.set("token", data.token)
+				router.push(`/reset-password?${params.toString()}`);
+			} catch {
+				setCodeError("Gagal verifikasi kode. Coba lagi.");
 			} finally {
 				setConfirmLoading(false);
 			}

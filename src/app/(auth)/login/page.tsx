@@ -31,11 +31,8 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     if (googleLoading) return;
     setGoogleLoading(true);
-    // TODO: Integrasi OAuth Google nyata (misal NextAuth / Firebase). Simulasi sementara:
-    setTimeout(() => {
-      setGoogleLoading(false);
-      router.push("/dashboard");
-    }, 1400);
+    // Redirect to our OAuth start route which handles state + Google redirect
+    window.location.href = "/api/auth/oauth/google";
   };
 
   return (

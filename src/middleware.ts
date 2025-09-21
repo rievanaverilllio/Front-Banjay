@@ -1,5 +1,4 @@
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 
 // Protect admin routes: require session token and oauth_provider=google
 export function middleware(req: NextRequest) {
@@ -30,17 +29,29 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     // Admin routes live under the (admin) group, but the group name is not in the URL.
+    "/asisten-dokumen",
     "/asisten-dokumen/:path*",
+    "/bantuan",
     "/bantuan/:path*",
+    "/buat-cepat",
     "/buat-cepat/:path*",
+    "/dashboard",
     "/dashboard/:path*",
+    "/data-curah-hujan",
     "/data-curah-hujan/:path*",
+    "/laporan-masyarakat",
     "/laporan-masyarakat/:path*",
+    "/notifikasi",
     "/notifikasi/:path*",
+    "/pengaturan",
     "/pengaturan/:path*",
+    "/peta-lokasi",
     "/peta-lokasi/:path*",
+    "/posko",
     "/posko/:path*",
+    "/pustaka-data",
     "/pustaka-data/:path*",
+    "/statistik",
     "/statistik/:path*",
   ],
 }

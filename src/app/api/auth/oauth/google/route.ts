@@ -1,4 +1,5 @@
 import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
 
 export const runtime = "nodejs"
 
@@ -22,8 +23,6 @@ export async function GET(req: Request) {
     return Response.json({ error: "Google OAuth not configured" }, { status: 500 })
   }
   const state = randomState()
-  const cookieStore = await cookies()
-  cookieStore.set("oauth_state", state, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 600 })
 
   const params = new URLSearchParams({
     client_id: clientId,
@@ -36,5 +35,7 @@ export async function GET(req: Request) {
     prompt: "select_account",
   })
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
-  return Response.redirect(authUrl, 302)
+  const res = NextResponse.redirect(authUrl, 302)
+  res.cookies.set("oauth_state", state, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 600 })
+  return res
 }

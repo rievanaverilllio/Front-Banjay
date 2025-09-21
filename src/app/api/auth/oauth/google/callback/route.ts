@@ -1,4 +1,5 @@
 import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
 import { prisma } from "@/service/db"
 import { signToken } from "@/lib/auth-token"
 
@@ -20,13 +21,26 @@ async function exchangeCodeForTokens(code: string, redirectUri: string) {
     body,
     cache: "no-store",
   })
-  if (!res.ok) throw new Error("Failed to exchange code")
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(`Failed to exchange code: ${res.status} ${res.statusText} ${text}`)
+  }
   return res.json() as Promise<{ id_token: string; access_token: string; expires_in: number; refresh_token?: string }>
+}
+
+function b64urlToString(input: string) {
+  const b64 = input.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((input.length + 3) % 4)
+  if (typeof atob !== "undefined") {
+    try { return decodeURIComponent(escape(atob(b64))) }
+    catch { return atob(b64) }
+  }
+  // Node fallback: use global Buffer
+  return Buffer.from(b64, "base64").toString("utf8")
 }
 
 function decodeJwt<T>(jwt: string): T {
   const [, p] = jwt.split(".")
-  const json = Buffer.from(p.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8")
+  const json = b64urlToString(p)
   return JSON.parse(json)
 }
 
@@ -39,17 +53,34 @@ export async function GET(req: Request) {
 
   const cookieStore = await cookies()
   const storedState = cookieStore.get("oauth_state")?.value
-  cookieStore.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
 
-  if (error) return Response.redirect("/login?error=access_denied", 302)
-  if (!state || !storedState || state !== storedState) return Response.redirect("/login?error=state_mismatch", 302)
-  if (!code || !redirectUri) return Response.redirect("/login?error=invalid_request", 302)
+  if (error) {
+    const res = NextResponse.redirect(new URL("/login?error=access_denied", url.origin), 302)
+    res.cookies.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
+    return res
+  }
+  if (!state || !storedState || state !== storedState) {
+    const res = NextResponse.redirect(new URL("/login?error=state_mismatch", url.origin), 302)
+    res.cookies.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
+    return res
+  }
+  if (!code || !redirectUri) {
+    const res = NextResponse.redirect(new URL("/login?error=invalid_request", url.origin), 302)
+    res.cookies.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
+    return res
+  }
 
   try {
     const tokens = await exchangeCodeForTokens(code, redirectUri)
     type IdPayload = { sub: string; email?: string; name?: string; picture?: string; email_verified?: boolean }
-    const idPayload = decodeJwt<IdPayload>(tokens.id_token)
-    if (!idPayload.email) return Response.redirect("/login?error=no_email", 302)
+    let idPayload: IdPayload
+    try {
+      idPayload = decodeJwt<IdPayload>(tokens.id_token)
+    } catch (err) {
+      console.error("Failed to decode id_token:", err)
+      return NextResponse.redirect(new URL("/login?error=invalid_id_token", url.origin), 302)
+    }
+    if (!idPayload.email) return NextResponse.redirect(new URL("/login?error=no_email", url.origin), 302)
 
     const email = idPayload.email.toLowerCase()
     let user = await prisma.user.findUnique({ where: { email } })
@@ -63,11 +94,15 @@ export async function GET(req: Request) {
     const exp = iat + 60 * 60 * 24 * 7
     const session = await signToken({ sub: user.id, email: user.email, role, iat, exp }, process.env.AUTH_SECRET || "dev-secret")
 
-    cookieStore.set("token", session, { httpOnly: true, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 })
-
-    const dest = (process.env.POST_LOGIN_REDIRECT || "/dashboard")
-    return Response.redirect(dest, 302)
+    const res = NextResponse.redirect(new URL(process.env.POST_LOGIN_REDIRECT || "/dashboard", url.origin), 302)
+    res.cookies.set("token", session, { httpOnly: true, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 })
+    res.cookies.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
+    return res
   } catch (e) {
-    return Response.redirect("/login?error=oauth_failed", 302)
+    console.error("OAuth callback failed:", e)
+    const msg = e instanceof Error ? encodeURIComponent(e.message) : "oauth_failed"
+    const res = NextResponse.redirect(new URL(`/login?error=${msg}`, url.origin), 302)
+    res.cookies.set("oauth_state", "", { httpOnly: true, path: "/", maxAge: 0 })
+    return res
   }
 }

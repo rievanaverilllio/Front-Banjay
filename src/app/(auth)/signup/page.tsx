@@ -1,26 +1,57 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SignupPage() {
   // Animations removed
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [strength, setStrength] = useState<0|1|2|3|4>(0);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
     setError("");
-    // TODO: submit form to API
-    console.log({ name, email, password });
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data?.error || "Signup failed");
+        return;
+      }
+      window.location.href = "/login";
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    let s = 0;
+    if (password.length >= 8) s++;
+    if (/[A-Z]/.test(password)) s++;
+    if (/[0-9]/.test(password)) s++;
+    if (/[^A-Za-z0-9]/.test(password)) s++;
+    if (s > 4) s = 4;
+    setStrength(s as 0|1|2|3|4);
+  }, [password]);
+
+  const strengthLabels = ["Sangat lemah", "Lemah", "Cukup", "Baik", "Kuat"];
+  const strengthColors = ["bg-red-400", "bg-orange-400", "bg-yellow-400", "bg-green-400", "bg-emerald-500"];
 
   return (
     <div className="min-h-screen w-full flex relative bg-[#FAFAF5]">
@@ -85,6 +116,14 @@ export default function SignupPage() {
                 <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm6-6V9a6 6 0 1 0-12 0v2a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2Zm-8-2a4 4 0 1 1 8 0v2H8V9Zm10 9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v5Z"/></svg>
               </span>
             </div>
+            <div className="mt-2 flex items-center gap-2">
+              <div className="flex-1 flex gap-1">
+                {[0,1,2,3].map(i => (
+                  <span key={i} className={`h-1 w-full rounded ${strength > i ? strengthColors[strength] : 'bg-gray-200'}`}></span>
+                ))}
+              </div>
+              <span className="text-[10px] uppercase tracking-wide text-gray-500">{strengthLabels[strength]}</span>
+            </div>
           </div>
           <div>
             <label className="block text-xs text-gray-600 mb-1">Confirm Password</label>
@@ -109,7 +148,9 @@ export default function SignupPage() {
           </div>
           <div className="flex gap-2 mt-4">
             {/* <button type="button" className="flex-1 py-2 rounded-full bg-gray-200 hover:bg-gray-300 text-black font-semibold text-base transition">Change method</button> */}
-            <button type="submit" className="flex-1 py-2 rounded-full bg-black hover:bg-gray-800 text-white font-semibold text-base transition">Create account</button>
+            <button type="submit" disabled={loading} className="flex-1 py-2 rounded-full bg-black hover:bg-gray-800 text-white font-semibold text-base transition disabled:opacity-60">
+              {loading ? "Creating..." : "Create account"}
+            </button>
           </div>
         </form>
       </div>
@@ -120,4 +161,4 @@ export default function SignupPage() {
       </div>
     </div>
   );
-} 
+}

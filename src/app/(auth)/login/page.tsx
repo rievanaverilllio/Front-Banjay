@@ -31,18 +31,11 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     if (googleLoading) return;
     setGoogleLoading(true);
-    // Redirect to our OAuth start route which handles state + Google redirect
     window.location.href = "/api/auth/oauth/google";
   };
 
   return (
     <div className="min-h-screen w-full flex relative bg-[#FAFAF5]">
-      {/* Kembali ke Home Button */}
-      {/* <Link href="/dashboard" className="absolute top-6 left-6 z-20 flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full bg-white hover:bg-gray-100 hover:text-black transition font-medium text-sm shadow">
-        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
-        Home
-      </Link> */}
-      {/* Left: Form Section */}
       <div className="w-full md:w-[55%] bg-white flex flex-col justify-center px-8 md:px-24 py-16 min-h-screen text-black">
         <p className="text-xs text-gray-600 mb-1">START FOR FREE</p>
         <h2 className="text-3xl sm:text-4xl font-semibold text-black mb-2 flex items-center">

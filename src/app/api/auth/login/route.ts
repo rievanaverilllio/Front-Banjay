@@ -15,12 +15,12 @@ export async function POST(req: Request) {
     if (!ok) return Response.json({ error: "Email atau password salah." }, { status: 401 })
 
     const role = user.role.toLowerCase() as "admin" | "user"
-    const iat = Math.floor(Date.now() / 1000)
-    const exp = iat + 60 * 60 * 24 * 7
-    const token = await signToken({ sub: user.id, email: user.email, role, iat, exp }, process.env.AUTH_SECRET || "dev-secret")
+  const iat = Math.floor(Date.now() / 1000)
+  const exp = iat + 60 * 10 // 10 minutes
+  const token = await signToken({ sub: user.id, email: user.email, role, iat, exp }, process.env.AUTH_SECRET || "dev-secret")
 
-    const cookieStore = await cookies()
-    cookieStore.set("token", token, { httpOnly: true, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 })
+  const cookieStore = await cookies()
+  cookieStore.set("token", token, { httpOnly: true, path: "/", sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 10 })
 
     return Response.json({ id: user.id, email: user.email, name: user.name, role })
   } catch (e) {

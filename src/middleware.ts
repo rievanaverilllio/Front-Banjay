@@ -1,12 +1,29 @@
 import { NextResponse, type NextRequest } from "next/server"
+import { verifyToken } from "@/lib/auth-token"
 
 // Protect admin routes: require session token (provider-agnostic)
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   const token = req.cookies.get("token")?.value
-
   if (!token) {
+    const url = req.nextUrl.clone()
+    url.pathname = "/login"
+    url.searchParams.set("next", pathname)
+    return NextResponse.redirect(url)
+  }
+
+  // verify token signature and expiry
+  try {
+    const secret = process.env.AUTH_SECRET || "dev-secret"
+    const payload = await verifyToken(token, secret)
+    if (!payload) {
+      const url = req.nextUrl.clone()
+      url.pathname = "/login"
+      url.searchParams.set("next", pathname)
+      return NextResponse.redirect(url)
+    }
+  } catch {
     const url = req.nextUrl.clone()
     url.pathname = "/login"
     url.searchParams.set("next", pathname)
